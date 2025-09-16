@@ -1,0 +1,289 @@
+<%- include('../layout/header') %>
+  <%- include('../layout/navBar') %>
+    <% const currentDate=new Date(); const twoWeeksAgo=new Date(currentDate); twoWeeksAgo.setDate(currentDate.getDate()
+      - 14); %>
+
+
+
+      <div class="untree_co-section product-section before-footer-section shop-container">
+        <div class="container-fluid">
+          <div class="row m-5">
+            <div class="col-3 ">
+              <% 
+              let params="";
+              if(category){
+                params= `category=${category}`
+              }
+                 %>
+              <form action="/shop?<%= params  %>" method="post" >
+                <div class="price-filter mb-5">
+                  <label for="price-range">FILTER BY PRICE</label>
+                  <input type="range" id="price-range" min="0" max="100000" value="0" class="slider" name="minPrice">
+                  <input type="range" id="price-range-max" min="0" max="100000" value="100000" class="slider" name="maxPrice">
+                  <p>Price: ₹<span id="price-min">0</span> — ₹<span id="price-max">100000</span></p>
+                  <button type="submit" class="filter-button">FILTER</button>
+                </div>
+              </form>
+
+              <div class="price-filter">
+                <label for="price-range">FILTER BY CATEGORY</label>
+                <ul>
+                  <%categoryData.forEach((data)=>{%>
+                    <a href="/shop?category=<%=data?.category_id%>">
+                      <li class="categoty-item">
+                        <%if(data?.category_name && data?.category_name!==null){%>
+                        <%=data?.category_name%> <span class="dim">(<%=data.count%>)</span>
+                        <%}%>
+                      </li>
+                    </a>
+                    <%})%>
+                    <a href="/shop">
+                      <li class="categoty-item">
+                        All Products
+                      </li>
+                    </a>
+                </ul>
+              </div>
+            </div>
+
+            <div class="col-9">
+              <div class="container">
+                <div class="flex">
+                  <% if(category) {%>
+                    <h6><a href="/">Home</a> / <a href="/shop">Shop</a>  / <span class="color"><%= productData[0]?.category_name  %></span></h6>
+                    <% } else { %>
+                      <h6><a href="/">Home</a> / <a href="/shop">Shop</a> / <span class="color">All Product</span></h6>
+                    <%  } %>
+                  
+                  <div class="sort-box-div mb-3">
+                    <select name="sort-box" class="sort-box" onchange="sortbyCategory('<%= category %>')">
+                      <option disabled selected>Sort By</option>
+                      <option value="1">Price low - high</option>
+                      <option value="2">Price high - low</option>
+                      <option value="3">New arrival</option>
+                      <option value="4">Product Name Aa - Zz</option>
+                      <option value="5">Product Name Zz - Aa</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <% if(productData.length === 0) { %>
+                    <h5 class="text-center mt-5">No Product Available</h5>
+                  <% } else { 
+                    productData.forEach((data) => {
+                      const img = data.product_image[0];
+                  %>
+                  <!-- Start Column 1 -->
+                  <div class="col-12 col-md-4 col-lg-4 mb-5">
+                    <a class="product-item" href="/view-product/<%= data._id %>">
+                      <div class="w-100 product-img-container">
+                        <% const itemDate = new Date(data.timestamp); 
+                        if(data.product_stock <= 0) { %>
+                          <span class="out-of-stock">Out Of Stock</span>
+                        <% } else if(data.product_stock <= 10) { %>
+                          <span class="label-low-stock">Only <%= data.product_stock %> Left</span>
+                        <% } else if (itemDate > twoWeeksAgo && itemDate <= currentDate) { %>
+                          <span class="label-new">New Item</span>
+                        <% } %>
+                        <img src="../../<%= img %>" class="img-fluid product-thumbnail">
+                      </div>
+                      <div class="flex">
+                        <p class="color-primary"><%= data?.category_name %></p>
+                        <div><button type="button" name="fav-icon"  class="fav-icon" data-id="<%= data._id %>">
+                          <% if(data.isWishlist === true)
+                          {%>
+                            <i class='bx bxs-heart card-wish-icon fav-color'></i>
+                          <%}else{%>
+                            <i class='bx bx-heart card-wish-icon'></i>
+                            <%}%>
+                          </button></div>
+                      </div>
+                      <h3 class="product-title"><%= data.product_name %></h3>
+                      <%if(data.product_price>data.discounted_price){%>
+                        <h5 class="product-price color-primary">₹<%= data.discounted_price %> <span class="cross-price">₹<%= data.product_price %> </span></h5>
+
+                      <%}else{%>
+                        <h5 class="product-price color-primary">₹<%= data.product_price %></h5>
+                        <%}%>
+                      
+                      &nbsp;&nbsp;<%= data.product_quantity %>
+                      <h3 class="product-price">Rating: <i class='bx bxs-star rating'></i> 4.5</h3>
+                      <span class="icon-cross" id="icon-cross" data-id="<%= data._id %>">
+                        <img src="../../user/assets/web-img/cross.svg" class="img-fluid">
+                      </span>
+                      
+                    </a>
+                  </div>
+                  <% }); } %>
+                </div>
+              </div>
+              <div class="pagination-container">
+  <ul class="pagination">
+    <% if (currentPage > 1) { %>
+      <li class="page-item"><a class="page-link" href="/shop?page=<%= currentPage - 1 %>&limit=<%= limit %>&category=<%= category %>">Previous</a></li>
+    <% } %>
+
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <li class="page-item <%= currentPage === i ? 'active' : '' %>"><a class="page-link" href="/shop?page=<%= i %>&limit=<%= limit %>&category=<%= category %>"><%= i %></a></li>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+      <li class="page-item"><a class="page-link" href="/shop?page=<%= currentPage + 1 %>&limit=<%= limit %>&category=<%= category %>">Next</a></li>
+    <% } %>
+  </ul>
+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+
+        
+        document.addEventListener('DOMContentLoaded', (event) => {
+          const priceMinElem = document.getElementById('price-min');
+          const priceMaxElem = document.getElementById('price-max');
+          const sliderMin = document.getElementById('price-range');
+          const sliderMax = document.getElementById('price-range-max');
+
+          function updatePrices() {
+            priceMinElem.textContent = Number(sliderMin.value).toLocaleString();
+            priceMaxElem.textContent = Number(sliderMax.value).toLocaleString();
+          }
+
+          sliderMin.addEventListener('input', () => {
+            if (parseInt(sliderMin.value) > parseInt(sliderMax.value)) {
+              sliderMin.value = sliderMax.value;
+            }
+            updatePrices();
+          });
+
+          sliderMax.addEventListener('input', () => {
+            if (parseInt(sliderMax.value) < parseInt(sliderMin.value)) {
+              sliderMax.value = sliderMin.value;
+            }
+            updatePrices();
+          });
+
+          updatePrices();
+        });
+
+        function sortbyCategory(params){
+            const sortBoxValue = document.getElementsByName('sort-box')[0].value
+            let location;
+            if(params)
+            {
+              location =`category=${params}&sortby=${sortBoxValue}`
+            }
+            else{
+              location =`sortby=${sortBoxValue}`
+            }
+            window.location.href=`/shop?${location}`
+          }
+
+document.addEventListener('DOMContentLoaded', function () {
+            
+    const favButtons = document.querySelectorAll('.fav-icon');
+
+    favButtons.forEach(button => {
+      button.addEventListener('click', function (event) {
+        
+        event.preventDefault(); // Prevent the default anchor behavior
+
+        const productId = button.getAttribute('data-id');
+
+        // Perform the fetch request to add the product to favorites
+        fetch('/add-to-favorites', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ productId: productId }),
+})
+.then(response => {
+  if(response.redirected)
+                {
+                    window.location.href = response.url;
+                }
+  else if (!response.ok) {
+    return response.text().then(text => {  // Read the response as text
+      try {
+        const err = JSON.parse(text);  // Try to parse the text as JSON
+        throw new Error(err.message);  
+      } catch (e) {
+        console.error('Unexpected response format:', text);  // Log the unexpected response
+        throw new Error('Unexpected response format');
+      }
+    });
+  }
+  return response.json();  // Parse the response as JSON
+})
+.then(data => {
+  console.log("data", data)
+  if (!data.success) {
+    if (data.redirect) {
+      window.location.href = data.redirect;
+    } else {
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        text: "Something went wrong. Try Again",
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+  } else if (data.action === 'added') {
+    button.innerHTML = "<i class='bx bxs-heart card-wish-icon fav-color'></i>";
+  } else if (data.action === 'deleted') {
+    button.innerHTML = "<i class='bx bx-heart card-wish-icon'></i>";
+  } else if(data.action === 'cartIn')
+  {
+    
+    notificationMessage("Product already in cart")
+  }
+})
+.catch(error => console.error('Error:', error));
+
+
+      });
+    });
+  });
+
+  document.querySelectorAll(".icon-cross").forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const productId = button.getAttribute('data-id');
+        console.log("icon-cross",productId);
+
+        fetch(`/wishlist-to-cart/${productId}`, {
+            method: "GET"
+        }).then((response) => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                return response.json(); // Correctly parsing JSON response
+            }
+        }).then((data) => {
+          Swal.fire({
+    position: "top-end",
+    text: data.message,
+    showConfirmButton: false,
+    timer: 2500
+  });
+            console.log(data, "data");
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
+});
+
+
+      </script>
+
+      <%- include('../layout/footer') %>
+        </body>
+
+        </html>
+
+        

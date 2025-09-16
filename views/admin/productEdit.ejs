@@ -1,0 +1,117 @@
+<%- include('./header') %> <%- include('./navbar') %> <script src="../../public/admin/alerts.js"></script>
+<% if(notification.status=='error'){ %>
+<script>
+  validationError("<%= notification.message %>");
+</script>
+<% } else if(notification.status == 'success') {%>
+<script>
+  successNotification("<%= notification.message %>");
+</script>
+<%}%>
+    
+    
+    <div class="container">
+        <div class="col-8 offset-2">
+            <form action="/admin/update-product/<%= productData._id%>" method="post" enctype="multipart/form-data">
+                <label class="block text-sm mb-3 mt-5">
+                  <span class="text-gray-700 dark:text-gray-400">Product Name</span>
+                  <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" name="product_name" type="text" required value="<%=productData.product_name %>" />
+            
+                </label>
+                <label class="block text-sm mb-3">
+                  <span class="text-gray-700 dark:text-gray-400">Product Description</span>
+                  <textarea class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" name="product_description"><%=productData.product_description %></textarea>
+
+                </label>
+            
+                <label class="block text-sm mb-3">
+                  <span class="text-gray-700 dark:text-gray-400">Product Price</span>
+                  <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" name="product_price" type="text" value="<%=productData.product_price %>"  required />
+                </label>
+                <label class="block text-sm mb-3">
+                  <span class="text-gray-700 dark:text-gray-400">Product Quantity</span>
+                  <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" name="product_quantity" type="text" value="<%=productData.product_quantity %>" required />
+                </label>
+                <label class="block text-sm mb-3">
+                  <span class="text-gray-700 dark:text-gray-400">Product Stock</span>
+                  <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" name="product_stock" type="text" value="<%=productData.product_stock %>" required />
+                </label>
+                <label class="block text-sm mb-3">
+                  <span class="text-gray-700 dark:text-gray-400">Category</span>
+                  <select name="product_category" id="" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" name="product_category" required>
+                    <option value="" disabled selected>Choose category</option>
+                    <% categoryData.forEach((row)=>{
+                          %>
+            <option value="<%= row._id%>">
+              <%= row.category_name%>
+            </option>
+            <% }) %>
+            </select>
+            </label>
+            <label class="block text-sm">
+              <span class="text-gray-700 dark:text-gray-400">Product Images</span>
+              <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" name="product_images" type="file"  accept="image/png, image/jpeg, image/jpg" multiple onchange="fileUpload()" />
+            </label>
+            <div id="imageContainer" class="img-flex-div"></div>
+            <div class="image-gallery" id="">
+    <% productData.product_image.forEach((val, index) => { %>
+        <div class="image-container">
+            <img src="../../<%= val %>" alt="Product image">
+            <div class="hover-text">
+                <a href="/admin/product-image-delete/<%= productData._id %>/<%= index %>">
+                    <i class='bx bxs-trash-alt'></i>
+                </a>
+            </div>
+        </div>
+    <% }) %>
+</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Close
+              </button>
+              <input type="submit" class="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple" value="Submit">
+            </div>
+            
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+      function fileUpload() {
+        console.log("Here im there ")
+    const fileInput = document.querySelector('input[name="product_images"]');
+    const files = fileInput.files;
+    const imageContainer = document.getElementById('imageContainer');
+
+    // Clear the previous images
+    imageContainer.innerHTML = '';
+    if(files.length>4){
+    imageContainer.innerHTML ="You can only chosse maximum of 4 Images";
+    imageContainer.style.color= 'red'
+    fileInput.value=''
+    }
+  else{
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const imageUrl = e.target.result;
+        setImage(imageUrl, imageContainer);
+      };
+
+      reader.readAsDataURL(file);
+    }}
+}
+
+// Function to set the image
+function setImage(imageUrl, container) {
+    const imgElement = document.createElement('img'); // Corrected to create an 'img' element
+    imgElement.src = imageUrl;
+    imgElement.className = "m-2"; // Add margin or other styling as needed
+    imgElement.style.maxWidth = "200px"; // Limit the size of the displayed images
+    container.appendChild(imgElement);
+}
+</script>

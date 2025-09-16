@@ -1,0 +1,439 @@
+<%-include('../layout/header') %>
+  <%- include('../layout/navBar') %>
+
+  <!-- ----------------- Notification section-----------------  -->
+
+<% if(notification.status === 'error') {%>
+    <script>notificationMessage("<%=notification.message%>")</script>
+   <%  } else if(notification.status=== 'success'){%>
+    <script>successNotification("<%=notification.message%>")</script>
+   <%  }%>
+
+
+   <% 
+   let address;
+   if (userData.customer_address.length !== 0)
+        address = userData.customer_address; 
+   else
+        address = [{}]; 
+%> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="../../user/cart.css">
+<div class="container-fluid mt-5 mx-2">
+
+    <div class="row">
+        <div class="col-xl-7">
+            <form action="/check-out" method="post" id="check-out-form">
+                <input type="text" name="paymentStatus" id="paymentStatus" value="success" class="d-none" >
+            <div class="card">
+                <div class="card-body">
+                    <ol class="activity-checkout mb-0 px-4 mt-3">
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-receipt text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <div>
+                                    <h5 class="font-size-16 mb-1">Billing Info</h5>
+                                    <p class="text-muted text-truncate mb-4">Your address</p>
+                                    <div class="mb-3">
+                                       
+                                            <div>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="billing-name">Name</label>
+                                                            <input type="text" class="form-control" name="customer_name" placeholder="Enter name" value="<%=userData.customer_name %>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="billing-email-address">Email Address</label>
+                                                            <input type="email" class="form-control" name="customer_emailid"  placeholder="Enter email" value="<%=userData.customer_emailid%>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="billing-phone">Phone</label>
+                                                            <input type="text" class="form-control" name="phonenumber" placeholder="Enter Phone no." value="<%= address[0].phonenumber %>">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="billing-address">Flat, House no., Building, Company, Apartment</label>
+                                                            <input type="text" class="form-control" name="building"  placeholder="Enter Address" value="<%=address[0].building %>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="billing-email-address">Area, Street, Sector, Village</label>
+                                                            <input type="text" class="form-control" name="street"  placeholder="Enter Area" value="<%=address[0].street %>">
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="billing-name">Land mark</label>
+                                                            <input type="text" class="form-control" name="landmark" placeholder="Enter landmark" value="<%=address[0].landmark %>">
+                                                        </div>
+                                                    
+                                                    
+                                                </div>
+                                                
+
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <div class="mb-4 mb-lg-0">
+                                                            <label class="form-label">City</label>
+                                                            <input type="text" class="form-control" name="city" placeholder="Enter City" value="<%=address[0].city %>">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <div class="mb-4 mb-lg-0">
+                                                            <label class="form-label" for="billing-city">Country</label>
+                                                            <input type="text" class="form-control" name="country"  placeholder="Enter Country" value="<%=address[0].country %>">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <div class="mb-0">
+                                                            <label class="form-label" for="zip-code" >Pincode</label>
+                                                            <input type="text" class="form-control" name="pincode" placeholder="Enter Postal code" value="<%=address[0].pincode %>">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-truck text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <div>
+                                    <h5 class="font-size-16 mb-1">Shipping Info</h5>
+                                    <p class="text-muted text-truncate mb-4">Saved address</p>
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            
+                                           <% if(userData.customer_address.length ===0){
+                                            %>
+                                            <p>No Saved Address Found</p>
+                                            <%
+                                           } else{ %> 
+                                                <div class="col-lg-4 col-sm-6">
+                                                    <a href="#" onclick="changeAddress('<%= JSON.stringify(address[0]) %>')">
+                                                    <div data-bs-toggle="collapse">
+                                                        <label class="card-radio-label mb-0">
+                                                            <input type="radio" name="address" id="info-address1" class="card-radio-input" checked="">
+                                                            <div class="card-radio text-truncate p-3">
+                                                                <span class="fs-14 mb-4 d-block">Address 1</span>
+                                                                <p><%=address[0].building %>,</p>
+                                                                <p>   <%=address[0].street %>
+                                                               <span> <%=address[0].city %> ,</span></p>
+                                                                    <p><%=address[0].state %>, <%=address[0].country %> ,<%=address.pincode %>,<%=address.phonenumber %></p>
+                                                                    <span> <%=address[0].landmark %></span></p>
+                                                            </div>
+                                                        </label>
+                                                        
+                                                        
+                                                    </div>
+                                                </a>
+                                                </div>
+                                            
+                                            <% for(i=1; i<address.length; i++){ %>
+                                                
+                                            <div class="col-lg-4 col-sm-6">
+                                                <div>
+                                                    
+                                                    <a href="#" onclick="changeAddress('<%= JSON.stringify(address[i]) %>')">
+                                                    <label class="card-radio-label mb-0">
+                                                        <input type="radio" name="address" id="info-address2" class="card-radio-input">
+                                                        <div class="card-radio text-truncate p-3">
+                                                            <span class="fs-14 mb-4 d-block">Address <%= i+1%></span>
+                                                            <p><%=address[i].building %>,</p>
+                                                            <p>   <%=address[i].street %>
+                                                           <span> <%=address[i].city %> ,</span></p>
+                                                                <p><%=address[i].state %>, <%=address[0].country %> ,<%=address.pincode %>,<%=address.phonenumber %></p>
+                                                                <span> <%=address[i].landmark %></span></p>
+                                                        </div>
+                                                    </label>
+                                                    <div class="edit-btn bg-light  rounded">
+                                                        <a href="#" data-bs-toggle="tooltip" data-placement="top" title="" data-bs-original-title="Edit">
+                                                            <i class="bx bx-pencil font-size-16"></i>
+                                                        </a>
+                                                    </div>
+                                                </a>
+                                                </div>
+                                            </div>
+                                        
+                                            <% } } %>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-wallet-alt text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <div>
+                                    <h5 class="font-size-16 mb-1">Payment Info</h5>
+                                    <p class="text-muted text-truncate mb-4">Choose a payment Method</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-size-14 mb-3">Payment method :</h5>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-sm-6">
+                                            <div data-bs-toggle="collapse">
+                                                <label class="card-radio-label">
+                                                    <input type="radio" name="pay_method" id="pay-methodoption1" checked="" class="card-radio-input" value="razorpay" id="rzp-button">
+                                                    <span class="card-radio py-3 text-center text-truncate">
+                                                        <!-- <i class="bx bx-credit-card d-block h2 mb-3"></i> -->
+                                                         <img src="../../user/assets/web-img/razorpay (2).png" alt="" class="img-fluid d-block mb-3">
+                                                         
+                                                        Razorpay
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-3 col-sm-6" id="wallet-div">
+                                            <div>
+                                                <label class="card-radio-label">
+                                                    <input type="radio" name="pay_method" id="pay-methodoption2" class="card-radio-input" data-wallet-amount="<%= walletamount %>" value="Wallet">
+                                                    <span class="card-radio py-3 text-center text-truncate">
+                                                        <i class='bx bx-wallet-alt d-block h2 mb-3'></i>
+                                                        Wallet <span class="color">(₹ <%= walletamount  %>)</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-sm-6">
+                                            <div>
+                                                <label class="card-radio-label">
+                                                    <input type="radio" name="pay_method" id="pay-methodoption3" class="card-radio-input"  value="Cash on delivery">
+
+                                                    <span class="card-radio py-3 text-center text-truncate">
+                                                        <i class="bx bx-money d-block h2 mb-3"></i>
+                                                        <span>Cash on Delivery</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row my-4">
+                <div class="col">
+                    <a href="/view-cart" class="btn btn-link text-muted">
+                        <i class="mdi mdi-arrow-left me-1"></i> Go to Cart </a>
+                </div> <!-- end col -->
+                <div class="col">
+                    <div class="text-end mt-2 mt-sm-0">
+                        <div id="payment-lock-banner" style="display:none; margin-bottom:8px;" class="alert alert-warning">
+                            Payment is already in process in another tab or window. Please wait.
+                        </div>
+                        <button type="submit" id="procced-button" class="btn btn-success" data-user='<%=userData.customer_name %>' data-email='<%=userData.customer_emailid%>' data-user-id='<%= userId %>'>
+                            <i class="mdi mdi-cart-outline me-1"></i> Procced </button>
+                    </div>
+                </div> <!-- end col -->
+            </div> <!-- end row-->
+        </div>
+    
+        <div class="col-xl-5">
+            
+            <div class="card checkout-order-summary">
+                <div class="card-body">
+                    
+                    <div class="table-responsive">
+                        <table class="table table-centered mb-0 table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th class="border-top-0" style="width: 110px;" scope="col">Product</th>
+                                    <th class="border-top-0" scope="col"></th>
+                                    <th class="border-top-0" scope="col">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                let totalSum=0
+                                productData.forEach(cart => {
+                                    const product =cart.product_data[0]
+                                    const img = product.product_image[0]
+                                    if(product.offerData.offer_amount)
+                                    var productTotal = product.offerData.offer_amount*cart.quantity
+                                    else
+                                    var productTotal = product.product_price*cart.quantity
+
+                                    totalSum+=productTotal
+                                %>
+                                <tr>
+                                    <th scope="row"><img src="../../<%=img%>" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
+                                    <td>
+                                        <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark"><%=product.product_name%></a></h5>
+                                        <p class="text-muted mb-0">
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star-half text-warning"></i>
+                                        </p>
+                                        
+                                        
+                                        <p class="text-muted mb-0 mt-1"><% if(product.offerData.offer_amount) {%>
+                                            ₹ <%=product.offerData.offer_amount %>
+                                        <%} else {%>
+                                            ₹ <%=product.product_price%>
+                                        <%}%> x <%=cart.quantity%></p>
+                                    </td>
+                                    <td>₹ <%= productTotal %></td>
+                                </tr>
+                                <%  })%>
+
+                               
+                                <tr>
+                                    <td colspan="2">
+                                        <h6 class="font-size-14 m-0">Sub Total :</h6>
+                                    </td>
+                                    <td>
+                                        ₹ <%=totalSum %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <%const GST= Math.round((18/100)* totalSum *100)/100%>
+                                        <h6 class="font-size-14 m-0">GST :</h6>
+                                    </td>
+                                    <td>
+                                        ₹ <%= GST %>
+                                    </td>
+                                </tr>
+                                <tr id="discount-div" >
+                                    <td colspan="2">
+                                        <h6 class="font-size-14 m-0">Discount:</h6>
+                                    </td>
+                                    <td>
+                                          <p id="discount-span">0</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <h6 class="font-size-14 m-0">Shipping Charge :</h6>
+                                    </td>
+                                    <td>
+                                        <% if(totalSum<=1000){ var ShippingCharge= 25 %>
+                                            ₹ <%= ShippingCharge %>
+                                        <% } else{ var ShippingCharge = 0 %>
+                                            <p class="color">Free shipping</p>
+                                        <% }
+                                        const totalAmount =  totalSum + ShippingCharge + GST;
+                                        %>
+                                        
+                                        
+                                        
+                                    
+                                    </td>
+                                </tr>
+                                
+                                                              
+                                    
+                                <tr class="bg-light">
+                                    <td colspan="2">
+                                        <h6 class="font-size-14 m-0 color">Total:</h6>
+                                    </td>
+                                    <td>
+                                        <p id="total-price" class="color" data-price="<%= totalAmount.toFixed(2) %>"> ₹ <%= totalAmount %></p>
+                        
+                                        
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 border shadow-0">
+          <div class="card-body">
+            
+      <div class="form-group">
+        <label class="form-label">Have coupon?</label>
+        <div class="input-group">
+            <input type="text" class="form-control border" name="coupenCode" placeholder="Coupon code" id="coupen-box" value="" />
+            <button type="button" class="btn btn-light border" onclick="applyCoupen()">Apply</button>
+        </div>
+        <div class="flex"><span><p class="form-label text-start" id="remove-coupen" onclick="removeCoupen('<%= totalAmount %>')" style="display:none;">Remove Coupons</p> </span>
+        <p class="form-label text-end color" id="view-coupen">View Coupons</p>
+        </div>
+        <div id="coupen-divs" style="display: none;">
+          <!-- Coupons will be inserted here dynamically -->
+        </div>
+      </div>
+          </div>
+        </div>
+    </form>
+        </div>
+    </div>
+    <!-- end row -->
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="../../user/checkoutScript.js"></script>
+<script>
+    
+    checkPayments();
+    function checkPayments(){
+        const totalPrice = document.getElementById('total-price').getAttribute('data-price')
+        const razorpay_btn = document.getElementById('pay-methodoption1')
+        const wallet_button = document.getElementById('pay-methodoption2')
+        const cod_button = document.getElementById('pay-methodoption3')
+        const wallet_amount = wallet_button.getAttribute('data-wallet-amount')
+        console.log("totalPrice",totalPrice)
+        console.log("wallet_amount",wallet_amount)
+        if(totalPrice <= wallet_amount)
+        {
+            wallet_button.setAttribute('enabled','enabled')
+            wallet_button.removeAttribute('disabled','disabled')
+        }else{
+            wallet_button.removeAttribute('enabled','enabled')
+            wallet_button.setAttribute('disabled','disabled')
+            razorpay_btn.setAttribute('checked','checked')
+        }
+        if(totalPrice>1000)
+        {
+            cod_button.setAttribute('disabled','disabled');
+            cod_button.removeAttribute('enabled','enabled')
+            cod_button.removeAttribute('checked','')
+            razorpay_btn.setAttribute('checked','checked')
+
+        }
+        else{
+            cod_button.setAttribute('enabled','enabled');
+            cod_button.removeAttribute('disabled','disabled')
+        }
+    }
+</script>

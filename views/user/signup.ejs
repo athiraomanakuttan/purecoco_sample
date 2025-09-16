@@ -1,0 +1,72 @@
+<%- include('../layout/header') %>
+<%- include('../layout/navBar') %>
+<script src="../../public/user/alert.js"></script>
+<!-- Start Hero Section -->
+
+  <% if(actionResponce.status== false){ %>
+    <script>  validationError("<%= actionResponce.message %>");</script>
+  <% } %>
+    
+
+<div class="hero">
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col-lg-6">
+        <div class="form-container">
+          <form method="post" action="/signup">
+            <div class="row">
+              <h1 class="text-center">Sign Up</h1>
+              <div class="col-6">
+                <div class="form-group">
+                  <label class="text-black" for="fname">First name</label>
+                  <input type="text" class="form-control" name="first_name" required value="<%= data.firstName %>"/>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group">
+                  <label class="text-black" for="lname">Last name</label>
+                  <input type="text" class="form-control" name="last_name" value="<%= data.lastName  %>"/>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="text-black" for="email">Email address</label>
+              <input type="email" class="form-control" name="emailId" required value="<%= data.emailId %>"/>
+            </div>
+
+            <div class="form-group">
+              <label class="text-black" for="email">Phone Number</label>
+              <input type="text" class="form-control" name="phoneNumber" required value="<%= data.phoneNumber  %>"/>
+            </div>
+            <div class="form-group mb-4">
+              <label class="text-black" for="email">Password</label>
+              <input type="password" class="form-control" name="password" required value="<%= data.password %>" />
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary-hover-outline mx-auto mb-4 w-100"
+            >
+              SIgn Up
+            </button>
+            <p class="text-dark text-center">Already have an Account ? <a href="/login" class="primary">Login</a></p>
+            <hr />
+            <div class="w-100">
+              <a href="/auth/google" class="google-sign-btn btn w-100"
+                ><img src="../../user/assets/web-img/google.jpg" alt="" class="google-signup"/>Sign up
+                With Google</a>
+              
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-lg-6 form-text">
+        <h1 class="text-center">Welcome!</h1>
+        <h5 class="text-center text-light">
+          Join our community of savvy shoppers! Sign up now to access exclusive
+          deals, personalized recommendations, and more.
+        </h5>
+      </div>
+    </div>
+  </div>
+</div>

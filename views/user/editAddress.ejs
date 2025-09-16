@@ -1,0 +1,75 @@
+<%- include('../layout/header') %>
+<%- include('../layout/navBar') %>
+<% if(notification.status=='error'){ %>
+    <script>
+      validationError("<%= notification.message %>");
+    </script>
+    <% } else if(notification.status=='success'){ %>
+    <script>
+      successNotification("<%= notification.message %>");
+    </script>
+    <% } %>
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-body">
+        <form method="post" action="/update-address/<%=index%>">
+          
+          <div class="form-group mb-2 mt-4">
+            <label for="address-input mb-5">Flat, House no., Building, Company, Apartment</label>
+            <input type="text" name="building"  class="form-control" id="address-input" value="<%= data.building%>" required >
+          </div>
+
+          <div class="form-group  mb-2">
+            <label for="address-input mb-5">Area, Street, Sector, Village</label>
+            <input type="text" name="street" class="form-control" id="address-input" value="<%= data.street%>" required>
+          </div>
+
+          <div class="form-group  mb-2">
+            <label for="address-input mb-5">Town/City</label>
+            <input type="text" name="city" class="form-control" id="address-input" value="<%= data.city%>" required>
+          </div>
+          <div class="row  mb-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="address-input mb-5">Phone Number</label>
+                <input type="text" name="phonenumber" class="form-control" id="address-input" value="<%= data.phonenumber%>" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="address-input mb-5">Pincode</label>
+                <input type="text" name="pincode" class="form-control" id="address-input" value="<%= data.pincode%>" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group  mb-2">
+            <label for="address-input mb-5">Land Mark</label>
+            <input type="text" name="landmark" class="form-control" id="address-input" value="<%= data.landmark%>" required>
+          </div>
+          <div class="row  mb-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="address-input mb-5">State</label>
+                <input type="text" name="state" class="form-control" id="address-input"  value="<%= data.state%>" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="address-input mb-5">Country</label>
+                <input type="text" name="country" class="form-control" id="address-input"  value="<%= data.country%>" required>
+              </div>
+            </div>
+          </div>
+          
+        
+      </div>
+      <div class="modal-footer">
+        <a href="/profile"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></a>
+        
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+    </form>
+    </div>
+  </div>

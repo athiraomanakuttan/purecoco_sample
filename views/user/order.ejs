@@ -1,0 +1,467 @@
+<%-include('../layout/header') %>
+<%- include('../layout/navBar') %>
+
+<!-- ----------------- Notification section-----------------  -->
+<% if(notification.status==='error' ) {%>
+<script>
+  notificationMessage("<%=notification.message%>")
+</script>
+<% } else if(notification.status==='success' ){%>
+<script>
+  successMessage("<%=notification.message%>")
+</script>
+<% }%>
+<% if(totalOrder.length === 0){ %>
+  <p><%= totalOrder.length   %></p>
+<div class="text-center mt-5 pt-5">
+  <h5>No Order Pending!</h5>
+<p>Enjoy Shopping With Us</p>
+<a href="/shop" class="btn btn-light  border mt-2"> Shop Now </a>
+</div>
+<%  } else {%>
+
+<div class="container-fluid mt-5 pt-5">
+  <div class="row">
+    <div class="col-9">
+      <div class="orderBtns mb-3  flex gap-3">
+        <button class="btn" onclick="getOrderByCategory('all')">Orders</button>
+        <button class="btn view-button" onclick="getOrderByCategory('Delivered')">Delivered</button>
+        <button class="btn view-button" onclick="getOrderByCategory('Cancelled')">Cancelled</button>
+        <button class="btn view-button" onclick="getOrderByCategory('Partially Cancelled')">Partially Cancelled</button>
+        <button class="btn view-button" onclick="showCancelledProducts()">Cancelled Products</button>
+        <button class="btn view-button" onclick="getOrderByCategory('Returned')">Returned </button>
+      </div>
+    <div id="orderContent">
+      <% if(orderData.length===0){
+        %>
+        <h6 class="text-center mt-5">No Pending orders found.</h6>
+        <%
+      } else { orderData.forEach(order => {  
+        const totalProduct = order.products.length
+        const productImage = order.products[0].product_image
+        %>
+        <!-- ---------- card start ---------  -->
+      <div class="card border shadow-none mb-3">
+        <div class="card-body">
+          <div class="d-flex align-items-start border-bottom pb-3">
+            <div class="me-4">
+              <img src="../../<%= productImage %>" alt="" class="avatar-lg rounded order-product-img">
+            </div>
+            <div class="flex-grow-1 align-self-center overflow-hidden">
+              <div>
+                <h6 class="text-truncate font-size-18"><a href="#" class="text-dark">Order Id : #<%= order.order_id%></a></h6>
+                <p class="mb-0 mt-1">Order Date : <span class="fw-medium">
+                    20-3-2023</span></p>
+                <p class="mb-0 mt-1">Total Products : <span class="color"><%= totalProduct%> </span></p>
+              </div>
+            </div>
+            <div class="flex-grow-1 align-self-center overflow-hidden">
+              <div>
+                <p class="mb-0">
+                    <% if(order.orderStatus ==='Pending'){ %>
+                        <i class='bx bxs-circle text-warning'></i> 
+                    <% } else if(order.orderStatus === 'Confirmed'){ %>
+                        <i class='bx bxs-circle text-info'></i> 
+                    <% } else if(order.orderStatus === 'Returned'){%>
+                        <i class='bx bxs-circle text-dark'></i> 
+                        <%} else if(order.orderStatus === 'Delivered'){%>
+                        <i class='bx bxs-circle text-success'></i> 
+                    <%} else if(order.orderStatus === 'Cancelled'){%>
+                        <i class='bx bxs-circle text-danger'></i> 
+                    <%}%>
+                    
+                    <%= order.orderStatus %>
+                  
+                </p>
+              </div>
+            </div>
+            <div class="flex-grow-1 align-self-center overflow-hidden">
+              <div>
+                <a href="/view-order/<%= order._id%>" class=" btn view-button">View Details <i class='bx bx-right-arrow-alt'></i></a>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mt-3">
+                  <h6 class="mb-0 mt-1">Total Amount : <span class="fw-medium color"> ₹
+                      <%=order.totalPrice %></span></h6>
+                  <p class="mb-0 mt-1 color">Payment : <span class="fw-medium">
+                    <%=order.paymentMethod %></span></p>
+                </div>
+              </div>
+              <div class="col-md-6 d-flex gap-5 align-items-center">
+                <div class="mt-3">
+                    <% if(order.orderStatus!=='Delivered' && order.orderStatus!=='Returned' && order.orderStatus!=='Cancelled'){ %>
+                  <a href="#" class="  border p-2 border-round" onclick="cancelOrder('<%= order._id%>')">Cancel Order</a>
+                  <% } else if(order.orderStatus==='Delivered'){%>
+                    <a href="/return-order/<%= order._id%>" class="btn">Return Order</a>
+                    <% } %>
+                </div>
+                <div class="mt-3">
+                  <% if(order.orderStatus!=='Cancelled' && order.orderStatus!=='Returned') {%>
+                    <a  onclick="downloadInvoice('<%= order._id%>')" class="color h6" style="cursor: pointer;" ><i class='bx bx-download'></i> Invoice</a>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end card -->
+<% }); } %>
+
+      <!-- Partially Cancelled Orders Section -->
+      <% if(partiallyCancelledOrders && partiallyCancelledOrders.length > 0) { %>
+        <h5 class="mb-3 mt-4" style="color: #dc3545;">Partially Cancelled Orders</h5>
+        <% partiallyCancelledOrders.forEach(order => {  
+          const totalProduct = order.products.length
+          const productImage = order.products[0].product_image
+          %>
+          <div class="card border shadow-none mb-3" style="border-left: 4px solid #dc3545;">
+            <div class="card-body">
+              <div class="d-flex align-items-start border-bottom pb-3">
+                <div class="me-4">
+                  <img src="../../<%= productImage %>" alt="" class="avatar-lg rounded order-product-img">
+                </div>
+                <div class="flex-grow-1 align-self-center overflow-hidden">
+                  <div>
+                    <h6 class="text-truncate font-size-18"><a href="#" class="text-dark">Order Id : #<%= order.order_id%></a></h6>
+                    <p class="mb-0 mt-1">Order Date : <span class="fw-medium">20-3-2023</span></p>
+                    <p class="mb-0 mt-1">Total Products : <span class="color"><%= totalProduct%> </span></p>
+                  </div>
+                </div>
+                <div class="flex-grow-1 align-self-center overflow-hidden">
+                  <div>
+                    <p class="mb-0">
+                      <i class='bx bxs-circle text-warning'></i> 
+                      Partially Cancelled
+                    </p>
+                  </div>
+                </div>
+                <div class="flex-grow-1 align-self-center overflow-hidden">
+                  <div>
+                    <a href="/view-order/<%= order._id%>" class=" btn view-button">View Details <i class='bx bx-right-arrow-alt'></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mt-3">
+                    <h6 class="mb-0 mt-1">Total Amount : <span class="fw-medium color">₹<%= order.totalPrice%></span></h6>
+                    <p class="mb-0 mt-1 color">Payment : <span class="fw-medium"><%= order.paymentMethod%></span></p>
+                  </div>
+                </div>
+                <div class="col-md-6 d-flex gap-5 align-items-center">
+                  <div class="mt-3">
+                    <a onclick="downloadInvoice('<%= order._id%>')" class="color h6" style="cursor: pointer;"><i class='bx bx-download'></i> Invoice</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      <% } %>
+
+      <!-- Individual Cancelled Products Section -->
+      <div data-section="cancelled-products">
+      <% if(cancelledProducts && cancelledProducts.length > 0) { %>
+        <h5 class="mb-3 mt-4" style="color: #dc3545;">Cancelled Products</h5>
+        <% cancelledProducts.forEach(product => { %>
+          <div class="card border shadow-none mb-3" style="border-left: 4px solid #dc3545; opacity: 0.8;">
+            <div class="card-body">
+              <div class="d-flex align-items-start border-bottom pb-3">
+                <div class="me-4">
+                  <img src="../../<%= product.product_image %>" alt="" class="avatar-lg rounded order-product-img">
+                </div>
+                <div class="flex-grow-1 align-self-center overflow-hidden">
+                  <div>
+                    <h6 class="text-truncate font-size-18"><a href="#" class="text-dark"><%= product.product_name %></a></h6>
+                    <p class="mb-0 mt-1">Order ID : <span class="fw-medium">#<%= product.order_id %></span></p>
+                    <p class="mb-0 mt-1">Category : <span class="color"><%= product.product_category %></span></p>
+                    <p class="mb-0 mt-1">Quantity : <span class="color"><%= product.product_quantity %></span></p>
+                  </div>
+                </div>
+                <div class="flex-grow-1 align-self-center overflow-hidden">
+                  <div>
+                    <p class="mb-0">
+                      <i class='bx bxs-circle text-danger'></i> 
+                      Cancelled
+                    </p>
+                    <p class="mb-0 mt-1">Order Status: <span class="fw-medium"><%= product.order_status %></span></p>
+                  </div>
+                </div>
+                <div class="flex-grow-1 align-self-center overflow-hidden">
+                  <div>
+                    <h6 class="mb-0">₹<%= product.product_price * product.product_quantity %></h6>
+                    <p class="mb-0 mt-1">Payment: <span class="fw-medium"><%= product.payment_method %></span></p>
+                  </div>
+                </div>
+                <div class="flex-grow-1 align-self-center overflow-hidden">
+                  <div>
+                    <a href="/view-order/<%= product.order_object_id %>" class="btn view-button">View Order <i class='bx bx-right-arrow-alt'></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div id="cancelledProductsSection" style="display: none;">
+          <h5 class="mb-3 mt-4" style="color: #dc3545;">Cancelled Products</h5>
+          <h6 class="text-center mt-5">No cancelled products found.</h6>
+        </div>
+      <% } %>
+      </div>
+
+    </div>
+    </div>
+    <div class="col-3 mt-4">
+      <div class="">
+      <h5>Payment Pending Orders </h5>
+
+        <% if(pendingOrders.length <= 0){ %>
+          <h6 class="mt-4">No  orders</h2>
+        <% }else{ pendingOrders.forEach((order)=>{ 
+          const totalProduct = order.products.length
+          const productImage = order.products[0].product_image
+        %>
+          <div class="card border shadow-none mb-3 mt-3">
+        <div class="card-body">
+          <div class="d-flex align-items-start border-bottom pb-3">
+            <div class="me-4">
+              <img src="../../<%= productImage %>" alt="" class="avatar-lg rounded order-product-img">
+            </div>
+            <div class="flex-grow-1 align-self-center overflow-hidden">
+              <div>
+                <h6 class="text-truncate font-size-18"><a href="#" class="color"> #<%= order.order_id%></a></h6>
+                <p class="mb-0 mt-1"><span class="fw-medium">
+                    20-3-2023</span></p>
+                <p class="mb-0 mt-1">Amount : <span class="color"> ₹ <%=order.totalPrice %> </span></p>
+                <a href="/view-order/<%= order._id %>" >View Details <i class='bx bx-right-arrow-alt'></i></a>
+                
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mt-3 pt-3 pb-3">
+                  <a href="/cancel-pending-order/<%= order._id%>" class="  border p-2 border-round">Cancel Order</a>
+                  
+                </div>
+              </div>
+              <div class="col-md-6 d-flex gap-5 align-items-center">
+                <div class="mt-3 pt-3 pb-3">
+                    
+                  <a href="#" class="border rounded p-2  btn-success" onclick="paynow('<%= order._id%>')">Re-Payment</a>
+                  
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        <%})} %>
+        </div>
+      </div>
+  </div>
+  <!-- end row -->
+
+</div>
+<% } %>
+<script>
+  window.__USER_ID__ = '<%= totalOrder && totalOrder[0] ? totalOrder[0].customer_id : (orderData && orderData[0] ? orderData[0].customer_id : (pendingOrders && pendingOrders[0] ? pendingOrders[0].customer_id : '')) %>'
+  window.__LOCK_USER_ID__ = '<%= typeof user_id !== 'undefined' ? user_id : '' %>'
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="../../user/orderScript.js"></script>
+<script>
+  function cancelOrder(order_id){
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Reason For cancellation",
+          input: "textarea", // Change input type to textarea
+          inputAttributes: {
+            autocapitalize: "off"
+          },
+          inputPlaceholder: "Enter your reason here...", // Placeholder for the textarea
+          showCancelButton: true,
+          confirmButtonText: "Cancel Order",
+          showLoaderOnConfirm: true,
+          preConfirm: async (reason) => {
+            try {
+              
+              return reason; 
+            } catch (error) {
+              Swal.showValidationMessage(`Request failed: ${error}`);
+            }
+          },
+          allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const reason = result.value;
+            window.location.href = `/cancel-order/${order_id}`;
+          }
+        });
+      }
+    });
+  }
+  async function downloadInvoice(orderId) {
+    try {
+        const response = await fetch(`/download-invoice/${orderId}`, {
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `Invoice_${orderId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error downloading report:', error);
+    }
+
+    
+}
+async function getOrderByCategory(orderStatus) {
+  try {
+    if(orderStatus==='all')
+    {
+      orderStatus = {$in:['Confirmed', 'Pending', 'Delivered', 'Returned', 'Cancelled','Shipped']}
+    }
+    const response = await fetch('/order-by-status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ orderStatus })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const orderData = await response.json();
+
+    // Select the div to replace content
+    const orderContent = document.getElementById('orderContent');
+
+    // Check if orderData is available and has elements
+    if (orderData && orderData.length > 0) {
+      // Generate HTML dynamically
+      let content = '';
+      orderData.forEach(order => {
+        const totalProduct = order.products.length;
+        const productImage = order.products[0].product_image;
+        const orderStatusIcon = {
+          'Pending': 'text-warning',
+          'Confirmed': 'text-info',
+          'Returned': 'text-dark',
+          'Delivered': 'text-success',
+          'Cancelled': 'text-danger'
+        }[order.orderStatus] || 'text-secondary';
+
+        content += `
+        <div class="card border shadow-none mb-3">
+          <div class="card-body">
+            <div class="d-flex align-items-start border-bottom pb-3">
+              <div class="me-4">
+                <img src="../../${productImage}" alt="" class="avatar-lg rounded order-product-img">
+              </div>
+              <div class="flex-grow-1 align-self-center overflow-hidden">
+                <div>
+                  <h6 class="text-truncate font-size-18"><a href="#" class="text-dark">Order Id : #${order.order_id}</a></h6>
+                  <p class="mb-0 mt-1">Order Date : <span class="fw-medium">20-3-2023</span></p>
+                  <p class="mb-0 mt-1">Total Products : <span class="color">${totalProduct}</span></p>
+                </div>
+              </div>
+              <div class="flex-grow-1 align-self-center overflow-hidden">
+                <div>
+                  <p class="mb-0">
+                    <i class='bx bxs-circle ${orderStatusIcon}'></i> 
+                    ${order.orderStatus}
+                  </p>
+                </div>
+              </div>
+              <div class="flex-grow-1 align-self-center overflow-hidden">
+                <div>
+                  <a href="/view-order/${order._id}" class="btn view-button">View Details <i class='bx bx-right-arrow-alt'></i></a>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mt-3">
+                    <h6 class="mb-0 mt-1">Total Amount : <span class="fw-medium color">₹${order.totalPrice}</span></h6>
+                    <p class="mb-0 mt-1 color">Payment : <span class="fw-medium">${order.paymentMethod}</span></p>
+                  </div>
+                </div>
+                <div class="col-md-6 d-flex gap-5 align-items-center">
+                  <div class="mt-3">
+                    ${order.orderStatus !== 'Delivered' && order.orderStatus !== 'Returned' && order.orderStatus !== 'Cancelled' ? `<a href="#" class="border p-2 border-round" onclick="cancelOrder('${order._id}')">Cancel Order</a>` : ''}
+                    ${order.orderStatus === 'Delivered' ? `<a href="/return-order/${order._id}" class="btn">Return Order</a>` : ''}
+                  </div>
+                  <div class="mt-3">
+                    ${order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned' ? `<a onclick="downloadInvoice('${order._id}')" class="color h6" style="cursor: pointer;"><i class='bx bx-download'></i> Invoice</a>` : ''}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      });
+
+      // Replace the content of the div
+      orderContent.innerHTML = content;
+    } else {
+      // Handle the case where no orders are found
+      orderContent.innerHTML = `<h6 class="text-center mt-5">No ${orderStatus.toLowerCase()} orders found.</h6>`;
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    const orderContent = document.getElementById('orderContent');
+    orderContent.innerHTML = `<p>An error occurred while fetching orders.</p>`;
+  }
+}
+
+// Function to show cancelled products
+function showCancelledProducts() {
+  const orderContent = document.getElementById('orderContent');
+  
+  // Hide all other sections and show cancelled products
+  const cancelledProductsSection = document.querySelector('[data-section="cancelled-products"]');
+  
+  if (cancelledProductsSection) {
+    // Show cancelled products section
+    orderContent.innerHTML = cancelledProductsSection.outerHTML;
+  } else {
+    // If no cancelled products section exists, show message
+    orderContent.innerHTML = `
+      <h5 class="mb-3 mt-4" style="color: #dc3545;">Cancelled Products</h5>
+      <h6 class="text-center mt-5">No cancelled products found.</h6>
+    `;
+  }
+}
+   
+    </script>

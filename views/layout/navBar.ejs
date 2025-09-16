@@ -1,0 +1,90 @@
+<nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+    <div class="container-fluid m-2">
+        <a class="navbar-brand" href="/">Pure QoQo<span>.</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li><a class="nav-link" href="/shop">Shop</a></li>
+                <li><a class="nav-link" href="/#why-choose-section">About us</a></li>
+                <li><a class="nav-link" href="/#footer-section">Contact us</a></li>
+                <li class="underline-none">
+                    <a class="nav-link search-nav-bar" href="#">
+                        <input type="text" id="search-input" class="search-input" value="" placeholder="Product / Category" autocomplete="off">
+                        <i class='bx bx-search navbar-box-icon' onclick="searchProduct()"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                <li><a class="nav-link" href="/wish-list"><i class='bx bx-heart navbar-box-icon'></i></a></li>
+                <li>
+                    <a class="nav-link" href="/view-cart">
+                        <i class='bx bx-cart-alt navbar-box-icon'></i>
+                        <% if (isLoggedIn) { %>
+                        <span class='badge badge-warning' id='lblCartCount' style="display: none"></span>
+                        <% } %>
+                    </a>
+                </li>
+                <% if (!isLoggedIn) { %>
+                <li><a class="nav-link" href="/login"><i class='bx bx-user navbar-box-icon'></i></a></li>
+                <% } %>
+                <% if (isLoggedIn) { %>
+                <li class="nav-item dropdown">
+                    <a class="nav-link user-list-div" href="#" id="userDropdown">
+                        <img src="../../user/assets/web-img/user-logo.png" alt="">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/profile">Profile</a>
+                        <a class="dropdown-item" href="/orders">Your Orders</a>
+                        <a class="dropdown-item" href="/wallet">Wallet</a>
+                        <a class="dropdown-item" href="/reset-password">Forgot Password</a>
+                        <a class="dropdown-item" href="/logout">Log Out</a>
+                    </div>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    function searchProduct() {
+        const searchInput = document.getElementById('search-input').value;
+        console.log(searchInput);
+        if (searchInput && searchInput !== '') {
+            window.location.href = `/shop?search=${searchInput}`;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const URL = '/get-cartitem-count';
+        fetch(URL, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // This will throw if the response is not JSON
+        })
+        .then((data) => {
+            console.log(data);
+            if (data > 0) {
+                const lblCartCount = document.getElementById('lblCartCount');
+                lblCartCount.innerHTML = data;
+                lblCartCount.style.display = 'inline-block';
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching the cart item count:", error);
+        });
+    });
+</script>

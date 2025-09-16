@@ -1,0 +1,191 @@
+<%- include('./header') %> <%- include('./navbar') %>
+
+
+  <% if (notification['status']== 'error') { %>
+    <script> errorNotification("<%= notification['message'] %>");</script>
+  <% }
+  else if(notification['status']== 'success'){
+    %>
+    <script> successNotification("<%= notification['message'] %>");</script>
+    <%
+  } %>
+
+
+<!-- Cards -->
+<div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 my-6">
+  <!-- Card -->
+  <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+    <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+      </svg>
+    </div>
+    <div>
+      <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+        Total Category
+      </p>
+      <p class="text-lg font-semibold text-gray-700 dark:text-gray-200"><%= categoryCount %></p>
+    </div>
+  </div>
+</div>
+
+<!-- New Table -->
+
+<div class="mb-4 two-side">
+  <a href="" class="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Category</a>
+  <div>
+    <form method="get" action="/admin/category">
+      <input class="mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" placeholder="category Name" type="text" name="search" />
+      <button type="submit" class="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+        <i class="bx bx-search"></i>
+      </button>
+    </form>
+  </div>
+</div>
+<div class="w-full overflow-hidden rounded-lg shadow-xs">
+  <div class="w-full overflow-x-auto">
+    <table class="w-full whitespace-no-wrap">
+      <thead>
+        <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+          <th class="px-4 py-3 flexble">
+            Category
+            <div class="sort-div">
+              <a href="/admin/category?order=asc&category=category_name"><i class="bx bxs-up-arrow"></i></a><a href="/admin/category?order=des&category=category_name"><i class="bx bxs-down-arrow"></i></a>
+            </div>
+          </th>
+
+          <th class="px-4 py-3 " >
+            <div style="display: flex; align-items: center;">
+              Created Date
+              <div class="sort-div ">
+              <a href="/admin/category?order=asc&category=timestamp"><i class="bx bxs-up-arrow"></i></a><a href="/admin/category?order=des&category=timestamp"><i class="bx bxs-down-arrow"></i></a>
+            </div></div></th>
+          <th class="px-4 py-3">
+            <span>Remove</span>
+          </th>
+          <th class="px-4 py-3">Action</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+        <% if(categoryData.length === 0) { %>
+        <tr>
+          <td colspan="4">
+            <h1 class="text-center">No data fround</h1>
+          </td>
+        </tr>
+        <% } else { categoryData.forEach((data)=>{ const formatedDate=
+        dateFormat(data.timestamp) %>
+        <tr class="text-gray-700 dark:text-gray-400">
+          <td class="px-4 py-3">
+            <div class="flex items-center text-sm">
+              <!-- Avatar with inset shadow -->
+
+              <div>
+                <p class="font-semibold"><%= data.category_name %></p>
+              </div>
+            </div>
+          </td>
+
+          <td class="px-4 py-3 text-sm"><%= formatedDate %></td>
+
+          <td class="px-4 py-3 text-sm">
+            <div class="relative">
+              <a href="/admin/removeCategory/<%= data._id %>">
+                <span class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:text-white dark:bg-orange-600">
+                  Delete
+                </span>
+              </a>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-sm">
+            <div class="relative">
+              <a href="/admin/editCategory/<%= data._id %>"><span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                  Edit
+                </span></a>
+            </div>
+          </td>
+        </tr>
+
+        <% }) } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ------------------------ pagination div ---------------  -->
+<div class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
+  <span class="flex items-center col-span-3">Page <%= page %> of <%= totalPages %></span>
+  <span class="col-span-2"></span>
+  <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+    <nav aria-label="Table navigation">
+      <ul class="inline-flex items-center">
+        <% if (page > 1) { %>
+          <li>
+            <a href="?page=<%= page - 1 %>&order=<%= order %>&category=<%= category %>&search=<%= search %>"
+              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">Prev</a>
+          </li>
+        <% } %>
+
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li>
+            <a href="?page=<%= i %>&order=<%= order %>&category=<%= category %>&search=<%= search %>"
+              class="px-3 py-1 rounded-md <%= page === i ? 'bg-purple-600 text-white' : '' %> focus:outline-none focus:shadow-outline-purple">
+              <%= i %>
+            </a>
+          </li>
+        <% } %>
+
+        <% if (page < totalPages) { %>
+          <li>
+            <a href="?page=<%= page + 1 %>&order=<%= order %>&category=<%= category %>&search=<%= search %>"
+              class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">Next</a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  </span>
+</div>
+
+</div>
+
+<!-- Charts -->
+
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/admin/addCategory" method="post">
+          <label class="block text-sm">
+            <span class="text-gray-700 dark:text-gray-400">Category Name</span>
+            <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" name="category_name" type="text" required />
+
+          </label>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <input type="submit" class="px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple" value="Submit">
+      </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  var myModal = document.getElementById("myModal");
+  var myInput = document.getElementById("myInput");
+
+  myModal.addEventListener("shown.bs.modal", function() {
+    myInput.focus();
+  });
+</script>

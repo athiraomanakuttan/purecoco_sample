@@ -1,0 +1,44 @@
+<%-include('../layout/header') %>
+  <%- include('../layout/navBar') %>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Razorpay Payment</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+  <h1>Complete Your Payment</h1>
+  <button id="rzp-button">Pay with Razorpay</button>
+
+  <script>
+    document.getElementById('rzp-button').onclick = function(e) {
+      var options = {
+        "key": "<%= razorpayOrder.key_id %>", // Razorpay Key ID
+        "amount": "<%= razorpayOrder.amount %>", // Amount is in currency subunits
+        "currency": "INR",
+        "name": "Your Company Name",
+        "description": "Test Transaction",
+        "order_id": "<%= razorpayOrder.id %>", // Razorpay Order ID
+        "handler": function (response){
+          // Redirect to success page
+          var paymentId = response.razorpay_payment_id;
+          var orderId = "<%= orderData.order_id %>";
+          window.location.href = "/payment-success" ;
+        },
+        "prefill": {
+          "name": "<%= orderData.address.customer_name %>",
+          "email": "<%= orderData.address.customer_emailid %>",
+          "contact": "<%= orderData.address.phonenumber %>"
+        },
+        "theme": {
+          "color": "#3399cc"
+        }
+      };
+
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+      e.preventDefault();
+    }
+  </script>
+

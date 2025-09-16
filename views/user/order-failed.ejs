@@ -1,0 +1,27 @@
+<%-include('../layout/header')  %>
+<style>
+    .center-div{
+        width: 30%;
+        height: 60vh;
+        background-color: #fff;
+        margin: auto;
+        margin-top: 5%;
+        text-align: center;
+        border-radius: 10px;
+    }
+    video{
+        width: 40%;
+       
+    }
+</style>
+<div class="center-div">
+    <video src="../../user/assets/web-img/Cancel.mp4" autoplay="" muted  class="img-fluid"></video>
+    <h4>Sorry!</h4>
+    <h4> Payment Failed. Please try again or<br> use a different payment method</h4>
+</div>
+
+<script>
+     setTimeout(()=>{
+        window.location.href='/orders'
+    },2000)
+</script>

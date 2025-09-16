@@ -1,0 +1,139 @@
+<%- include('./header') %> <%- include('./navbar') %>
+
+
+<% const categoryData = [] %>
+<div class="mb-4 two-side mt-5">
+    <div>
+        <a  class="mt-5 px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="getPopularProducts()">Popular Products</a>
+        <a  class="mt-5 ml-3 px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="getPopularCategory()">Popular Category</a>
+        
+    </div>
+   
+  </div>
+  <div class="w-full overflow-hidden rounded-lg shadow-xs">
+   
+    <div class="w-full overflow-x-auto" id="popular-products-container"></div>
+  
+    
+  </div>
+
+  <script>
+async function getPopularCategory(){
+    try {
+        const response = await fetch('/admin/popularCategory', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Data: ", data);
+
+        if (data.length === 0) {
+            document.getElementById('popular-products-container').innerHTML = '<h1 class="text-center">No data found</h1>';
+            return;
+        }
+
+        const tableContent = data.map(item => {
+            return `
+                <tr class="text-gray-700 dark:text-gray-400">
+                    
+                    
+                    <td class="px-4 py-3 text-sm">${item.category_name}</td>
+                    <td class="px-4 py-3 text-sm">${item.totalQuantitySold}</td>
+                </tr>`;
+        }).join('');
+
+        const tableHTML = `
+            <table class="w-full whitespace-no-wrap">
+                <thead>
+                    <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                        
+                        <th class="px-4 py-3">Category Name</th>
+                        <th class="px-4 py-3">Quantity Sold</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                    ${tableContent}
+                </tbody>
+            </table>`;
+
+        document.getElementById('popular-products-container').innerHTML = tableHTML;
+    } catch (error) {
+        document.getElementById('popular-products-container').innerHTML = '<h1 class="text-center">Error loading data</h1>';
+    }
+}
+
+ async function getPopularProducts() {
+    try {
+        const response = await fetch('/admin/popularProducts', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Data: ", data);
+
+        if (data.length === 0) {
+            document.getElementById('popular-products-container').innerHTML = '<h1 class="text-center">No data found</h1>';
+            return;
+        }
+
+        const tableContent = data.map(item => {
+            return `
+                <tr class="text-gray-700 dark:text-gray-400">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center text-sm">
+                            <div>
+                               <img src='../../${item.productImage}' class="img-fluid" style="width:6rem;"/>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center text-sm">
+                            <div>
+                                <p class="font-semibold">${item.productName}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-sm">${item.productCategory}</td>
+                    <td class="px-4 py-3 text-sm">${item.totalQuantitySold}</td>
+                </tr>`;
+        }).join('');
+
+        const tableHTML = `
+            <table class="w-full whitespace-no-wrap">
+                <thead>
+                    <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                        <th class="px-4 py-3">Product</th>
+                        <th class="px-4 py-3">Product Name</th>
+                        <th class="px-4 py-3">Category</th>
+                        <th class="px-4 py-3">Quantity Sold</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                    ${tableContent}
+                </tbody>
+            </table>`;
+
+        document.getElementById('popular-products-container').innerHTML = tableHTML;
+    } catch (error) {
+        console.error("There was an error fetching the popular products: ", error);
+        document.getElementById('popular-products-container').innerHTML = '<h1 class="text-center">Error loading data</h1>';
+    }
+}
+
+// Call the function to get popular products
+getPopularProducts();
+  </script>

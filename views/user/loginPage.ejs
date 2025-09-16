@@ -1,0 +1,58 @@
+<%- include('../layout/header') %>
+<%- include('../layout/navBar') %>
+<script src="../../public/user/alert.js"></script>
+
+<!-- Start Hero Section -->
+<% if(actionResponce.status== false){ %>
+    <script>  validationError("<%= actionResponce.message %>");</script>
+  <% } else if(actionResponce.status == true){%>
+    <script>  notificationMessage("<%= actionResponce.message %>");</script>
+    <% } %>
+<div class="hero">
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col-lg-6">
+        <div class="form-container">
+          <form method="post" action="/login">
+            <div class="row">
+              <h1 class="text-center">Log In</h1>
+            </div>
+            <div class="form-group">
+              <label class="text-black" for="email">Email address</label>
+              <input type="email" class="form-control" name="emailId" required  value="<%=email%>"/>
+            </div>
+
+            <div class="form-group mb-4">
+              <label class="text-black" for="email">Password</label>
+              <input type="password" class="form-control" name="password"  />
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary-hover-outline mx-auto mb-4 w-100"
+            >
+              Log In
+            </button>
+            <hr />
+            <div class="w-100">
+              <a href="/auth/google" class="google-sign-btn btn w-100"
+                ><img src="../../user/assets/web-img/google.jpg" alt="" class="google-signup"/>Sign up
+                With Google</a>
+              
+            </div>
+            <p class="text-dark text-center">Don't have an Account ? <a href="/signup" class="primary">Sign Up</a></p>
+            <p class="text-dark text-center">Forgot password? <a href="/reset-password" class="primary">Reset Password</a></p>
+            
+            
+          </form>
+        </div>
+      </div>
+      <div class="col-lg-6 form-text">
+        <h2 class="text-center text-light">We're excited to see you again!</h2>
+        <h6 class="text-center text-light">
+            Log in now to reconnect <br> with our community of savvy shoppers.Access your personalized deals, recommendations, and much more.
+        </h6>
+      </div>
+    </div>
+  </div>
+</div>

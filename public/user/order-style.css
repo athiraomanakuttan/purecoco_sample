@@ -1,0 +1,57 @@
+.progress-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 20px 0;
+    padding: 0 15px;
+}
+.progress-bar {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #ccc;
+    z-index: 1;
+    transform: translateY(-50%);
+}
+.progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background: #4caf50;
+    transition: width 1s;
+    z-index: 2;
+}
+.progress-step {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+    text-align: center;
+}
+.progress-step .icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #4caf50;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    transition: background 0.3s, color 0.3s;
+}
+.progress-step.incomplete .icon {
+    background: #ccc;
+    color: #fff;
+}
+.progress-step .text {
+    font-size: 14px;
+}

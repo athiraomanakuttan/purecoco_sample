@@ -1,0 +1,166 @@
+<%- include('../layout/header') %>
+  <%- include('../layout/navBar') %>
+    <% if(notification.status=='error' ){ %>
+      <script>
+        validationError("<%= notification.message %>");
+      </script>
+      <% } else if(notification.status=='success' ){ %>
+        <script>
+          successNotification("<%= notification.message %>");
+        </script>
+        <% } %>
+          <div class="container mt-5">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-container user-profile-div">
+                  <div class="pen-option">
+                    <a href="#" id="edit-enable-btn" onclick="displayBtn()" title="Edit Profile"><i
+                        class="bx bxs-pencil"></i></a>
+                  </div>
+                  <h2>Your Profile</h2>
+                  <form method="post" action="/update-profile">
+                    <div class="form-group mb-3">
+                      <label class="text-black">Name</label>
+                      <input type="text" class="form-control" name="userName" required
+                        value="<%= data.customer_name %>" />
+                    </div>
+                    <div class="form-group mb-3">
+                      <label class="text-black">Email address</label>
+                      <input type="email" class="form-control" name="emailId" required
+                        value="<%= data.customer_emailid %>" disabled />
+                    </div>
+                    <div class="form-group mb-5">
+                      <label class="text-black">Phone Number</label>
+                      <input type="text" class="form-control" name="phoneNumber" required
+                        value="<%= data.customer_phone  %>" />
+                    </div>
+                    <button type="submit" class="btn btn-primary-hover-outline mx-auto mb-4 w-100"
+                      id="update-btn">Update</button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="col-lg-6">
+                <div class="form-container user-profile-div">
+                  <div class="pen-option">
+                    <a href="#" id="add-address-btn" data-bs-toggle="modal" data-bs-target="#addressModal"
+                      title="Add New Address"><i class="bx bx-plus"></i></a>
+                  </div>
+                  <h2>Address</h2>
+                  <% if (!data.customer_address || data.customer_address.length===0) { %>
+                    <p class="mt-5">No Address Found. Please add an Address.</p>
+                    <% } else { %>
+
+                      <% data.customer_address.forEach((address,index)=>{%>
+                        <div class="single-address-div">
+                          <div class="address-icons">
+                            <a href="/edit-address/<%=index%>" title="Edit Address"><i class='bx bx-pencil'></i>
+                              <a href="/remove-address/<%=index%>" title="Delete Address"><i
+                                  class='bx bx-trash'></i></a>
+                          </div>
+                          <div class="address">
+                            <p><span>
+                                <%=address.building %>,
+                              </span>
+                              <span>
+                                <%=address.street %>
+                              </span>
+                              <span>
+                                <%=address.city %> ,
+                              </span>
+                            <p>
+                              <%=address.state %>, <%=address.country %> ,<%=address.pincode %>,<%=address.phonenumber
+                                      %>
+                            </p>
+                            <span>
+                              <%=address.landmark %>
+                            </span></p>
+                          </div>
+                        </div>
+
+                        <% })} %>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Address adding modal box -->
+          <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add New Address</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form method="post" action="/add-address">
+
+                    <div class="form-group mb-2">
+                      <label for="address-input mb-5">Flat, House no., Building, Company, Apartment</label>
+                      <input type="text" name="building" class="form-control" id="address-input"
+                        placeholder="Enter your address" required>
+                    </div>
+
+                    <div class="form-group  mb-2">
+                      <label for="address-input mb-5">Area, Street, Sector, Village</label>
+                      <input type="text" name="street" class="form-control" id="address-input"
+                        placeholder="Enter your Area" required>
+                    </div>
+
+                    <div class="form-group  mb-2">
+                      <label for="address-input mb-5">Town/City</label>
+                      <input type="text" name="city" class="form-control" id="address-input"
+                        placeholder="Enter your City" required>
+                    </div>
+                    <div class="row  mb-2">
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label for="address-input mb-5">Phone Number</label>
+                          <input type="text" name="phonenumber" class="form-control" id="address-input"
+                            placeholder="Contact Number" required>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label for="address-input mb-5">Pincode</label>
+                          <input type="text" name="pincode" class="form-control" id="address-input"
+                            placeholder="Enter your Pincode" required>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group  mb-2">
+                      <label for="address-input mb-5">Land Mark</label>
+                      <input type="text" name="landmark" class="form-control" id="address-input"
+                        placeholder="Enter Nearest Landmark" required>
+                    </div>
+                    <div class="row  mb-2">
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label for="address-input mb-5">State</label>
+                          <input type="text" name="state" class="form-control" id="address-input"
+                            placeholder="Enter your state" required>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label for="address-input mb-5">Country</label>
+                          <input type="text" name="country" class="form-control" id="address-input"
+                            placeholder="Enter your Country " required>
+                        </div>
+                      </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>

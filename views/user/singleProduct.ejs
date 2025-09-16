@@ -1,0 +1,269 @@
+<%- include('../layout/header') %>
+<%- include('../layout/navBar') %>
+
+<!-- ----------------- Notification section-----------------  -->
+ <% if(notification.status === 'error') {%>
+  <script>notificationMessage("<%=notification.message%>")</script>
+ <%  } else if(notification.status=== 'success'){%>
+  <script>notificationMessage("<%=notification.message%>")</script>
+ <%  }%>
+
+<% const currentDate=new Date(); const twoWeeksAgo=new Date(currentDate); twoWeeksAgo.setDate(currentDate.getDate()
+      - 14); %>
+
+<form action="/add-to-cart/<%=productData._id%>" method="post">
+  <section class="py-5">
+    <div class="container">
+      <div class="row gx-5">
+        <div class="col-lg-4 ">
+
+          <div class="border rounded-4 mb-3 d-flex justify-content-center main-image">
+
+            <img style="width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit image-view rounded-img" src="../../<%= productData.product_image[0]%>" />
+
+          </div>
+
+          <div class="d-flex justify-content-center mb-3">
+            <% for(let i=0; i<productData.product_image.length;i++){ %>
+            <a data-fslightbox="mygalley" class="border mx-1 rounded-2" onclick="changeImage(`<%= productData.product_image[i].replace('/\\/g','\\\\')%>`)" data-type="image" class="item-thumb">
+              <img width="60" height="60" class="rounded-2" src="../../<%= productData.product_image[i]%>" />
+            </a>
+            <% } %>
+
+
+          </div>
+
+          <!-- thumbs-wrap.// -->
+          <!-- gallery-wrap .end// -->
+        </div>
+
+        <main class="col-lg-8">
+          <div class="ps-lg-3">
+            <h4 class="title text-dark">
+              <%= productData.product_name%>
+            </h4>
+            <div class="d-flex flex-row my-3">
+              <div class="text-warning mb-1 me-2">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <span class="ms-1">
+                  4.5
+                </span>
+              </div>
+              <% if(productData.product_stock>0) {%>
+              <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i><%= productData.product_stock%></span>
+              <span class="text-success ms-2">In stock</span>
+              <% } else{ %>
+                <h5 class="text-success ms-2">Out of Stock</h5>
+                <% } %>
+            </div>
+
+            <div class="mb-3">
+              <%if(productData.product_price <= productData.discounted_price ){  %>
+                
+                <span class="h5 color">₹ <%= productData.product_price%></span>
+              <%  } else {%>
+                <span class="h5 color">₹ <%= productData.discounted_price%> <span class="cross-price">₹ <%= productData.product_price%></span></span>
+              <% } %>
+              
+              <span class="text-muted">/<%= productData.product_quantity%></span>
+            </div>
+
+            <p>
+              <%= productData.product_description%>
+            </p>
+
+            <hr />
+            <% if(productData.product_stock>0){ %>
+            <div class="row mb-4">
+
+              <!-- col.// -->
+              <%  if(!cartData){%>
+               
+              <div class="col-md-4 col-6 mb-3">
+                
+                <label class="mb-2 d-block">Quantity</label>
+                <div class="input-group mb-3" style="width: 170px;">
+
+                  <input type="number" name="quantity" class="form-control text-center border border-secondary number-input" value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" min="0" max="<%= productData.product_stock%>" />
+
+                </div>
+              </div>
+              <%  } else{ %>
+                <div class="col-md-4 col-6 mb-3">
+                
+                  <label class="mb-2 d-block">Quantity</label>
+                  <div class="input-group mb-3" style="width: 170px;">
+  
+                    <input type="number" name="quantity" class="form-control text-center border border-secondary number-input" value="<%=cartData.quantity%>" aria-label="Example text with button addon" aria-describedby="button-addon1" min="0" max="<%= productData.product_stock%>" />
+  
+                  </div>
+                </div>
+                <% } %>
+            </div>
+            <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
+            
+            <button type="submit" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>          
+          <% } %>
+
+          <% if(!productData.isWishlist) { %>
+          <a  class="btn btn-light border border-secondary py-2 icon-hover px-3" name="fav-icon" id="fav-icon"  class="fav-icon" data-id="<%= productData._id %>"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+
+          <%  } %>
+          </div>
+        </main>
+
+      </div>
+    </div>
+  </section>
+</form>
+
+<div class="untree_co-section product-section before-footer-section">
+
+  <div class="container">
+    <h5 class="mb-5">Product Recomendation For You</h5>
+    <div class="row">
+      <%allProducts.forEach((data)=>{
+						let img= data.product_image[0]
+						%>
+      <!-- Start Column 1 -->
+      <div class="col-12 col-md-4 col-lg-3 mb-5">
+        <a class="product-item" href="/view-product/<%=data._id %>">
+
+          <%  const itemDate=new Date(data.timestamp); if(data.product_stock<=0) {%>
+          <span class="out-of-stock">Out Of Stock</span>
+          <%} else if(data.product_stock<=10){%>
+          <span class="label-low-stock">Only <%=data.product_stock%> left </span>
+          <% } else if (itemDate> twoWeeksAgo && itemDate <= currentDate) { %>
+          <span class="label-new">new item</span>
+          <% } %>
+          <img src="../../<%=img %>" class="img-fluid product-thumbnail" style="border-radius:5px;">
+          <div class="flex">
+            <p><%=data.category_name %></p><i class='bx bx-heart card-wish-icon'></i>
+          </div>
+          <h3 class="product-title"><%=data.product_name %></h3>
+          <strong class="product-price">₹<%=data.product_price %></strong>&nbsp;&nbsp;<%=data.product_quantity %>
+          <h3 class="product-price">Rating : <i class='bx bxs-star rating'></i> 4.5</h3>
+
+          <span class="icon-cross">
+            <img src="../../user/assets/web-img/cross.svg" class="img-fluid">
+          </span>
+        </a>
+      </div>
+      <!-- End Column 1 -->
+      <%})%>
+
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const numberInput = document.querySelector('.number-input');
+
+  numberInput.addEventListener('keypress', (e) => {
+    e.preventDefault(); // Prevent character input
+    // Optional: Clear existing text
+    // numberInput.value = '';
+  });
+
+  numberInput.addEventListener('keydown', (e) => {
+    if (e.keyCode === 38) { // Up arrow
+      e.preventDefault();
+      numberInput.value++;
+    } else if (e.keyCode === 40) { // Down arrow
+      e.preventDefault();
+      numberInput.value--;
+    }
+  });
+
+
+  const imageContainer = document.querySelector('.main-image'); // Select the container element
+  const productImg = imageContainer.querySelector('.image-view'); // Select the image within the container
+
+  imageContainer.addEventListener("mousemove", (e) => {
+    const rect = imageContainer.getBoundingClientRect(); // Get container's bounding rectangle
+    const x = (e.clientX - rect.left) / rect.width; // Calculate relative X position
+    const y = (e.clientY - rect.top) / rect.height; // Calculate relative Y position
+
+    productImg.style.transformOrigin = `${x * 100}% ${y * 100}%`; // Set transform origin based on mouse position
+    productImg.style.transform = "scale(2)"; // Apply zoom effect (adjust scale as needed)
+  });
+
+  imageContainer.addEventListener("mouseleave", () => {
+    productImg.style.transformOrigin = "center"; // Reset transform origin to center
+    productImg.style.transform = "scale(1)"; // Reset zoom to normal
+  });
+
+  async function changeImage(img) {
+    productImg.src = `../../${img}`
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    const button = document.getElementById('fav-icon');
+    if (button) {
+        button.addEventListener('click', function (event) {
+            console.log("Button clicked");
+            event.preventDefault(); // Prevent the default anchor behavior
+
+            const productId = button.getAttribute('data-id');
+
+            // Perform the fetch request to add the product to favorites
+            fetch('/add-to-favorites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId: productId }),
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (!response.ok) {
+                    return response.text().then(text => { // Read the response as text
+                        try {
+                            const err = JSON.parse(text); // Try to parse the text as JSON
+                            throw new Error(err.message);
+                        } catch (e) {
+                            console.error('Unexpected response format:', text); // Log the unexpected response
+                            throw new Error('Unexpected response format');
+                        }
+                    });
+                }
+                return response.json(); // Parse the response as JSON
+            })
+            .then(data => {
+                console.log("data", data);
+                if (!data.success) {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "error",
+                            text: "Something went wrong. Try Again",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                } else if (data.action === 'added') {
+                    notificationMessage("Product Added to wishlist");
+                    button.innerHTML ="<i class='bx bxs-heart card-wish-icon fav-color'></i> Saved"
+                } else if (data.action === 'deleted') {
+                  button.innerHTML ="<i class='bx bxs-heart card-wish-icon'></i> Save"
+                    notificationMessage("Product Removed from wishlist");
+                } else if (data.action === 'cartIn') {
+                    notificationMessage("Product already in cart");
+                  button.innerHTML ="<i class='bx bxs-heart card-wish-icon'></i> Save"
+
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
+});
+
+</script>
+<% -include('../layout/footer') %>

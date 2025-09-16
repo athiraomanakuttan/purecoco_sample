@@ -1,0 +1,174 @@
+<%- include('./header') %> 
+<%- include('./navbar') %>
+
+
+  <% if (notification['status']== 'error') { %>
+    <script> errorNotification("<%= notification['message'] %>");</script>
+  <% }
+  else if(notification['status']== 'success'){
+    %>
+    <script> successNotification("<%= notification['message'] %>");</script>
+    <%
+  } %>
+
+
+  <!-- Cards -->
+<div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 my-6">
+  <!-- Card -->
+  <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+    <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+      </svg>
+    </div>
+    <div>
+      <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+        Pending Orders
+      </p>
+      <p class="text-lg font-semibold text-gray-700 dark:text-gray-200"><%= pendingCount %></p>
+    </div>
+  </div>
+</div>
+
+<!-- New Table -->
+
+
+<div class="w-full overflow-hidden rounded-lg shadow-xs">
+  
+
+    <div class="w-full overflow-x-auto">
+    <table class="w-full whitespace-no-wrap">
+      <thead>
+        <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+          <th class="px-4 py-3 flexble">
+            Order Id
+            
+          </th>
+
+          <th class="px-4 py-3">Quantity</th>
+
+          <th class="px-4 py-3">
+            <span>Amount</span>
+          </th>
+          <th class="px-4 py-3">
+            <span>Payment</span>
+          </th>
+          <th class="px-4 py-3 flexble">
+            <span>Time</span>
+            <div class="sort-div">
+              <a href="/admin/order?order=asc&category=createdAt"><i class="bx bxs-up-arrow"></i></a>
+              <a href="/admin/order?order=des&category=createdAt"><i class="bx bxs-down-arrow"></i></a>
+            </div>
+          </th>
+
+          <th class="px-4 py-3 ">
+            <div class="flexble">
+                <span>Status</span>
+            <div class="sort-div">
+              <a href="/admin/order?order=asc&category=orderStatus"><i class="bx bxs-up-arrow"></i></a>
+              <a href="/admin/order?order=des&category=orderStatus"><i class="bx bxs-down-arrow"></i></a>
+            </div></div>
+          </th>
+
+          <th class="px-4 py-3">Action</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+        <% if(orderDetails.length === 0) { %>
+        <tr>
+          <td colspan="4">
+            <h1 class="text-center">No data fround</h1>
+          </td>
+        </tr>
+        <% } else { orderDetails.forEach((data)=>{ const formatedDate=
+        dateFormat(data.createdAt) %>
+        <tr class="text-gray-700 dark:text-gray-400">
+          <td class="px-4 py-3">
+            <div class="flex items-center text-sm">
+
+              <div>
+                <p class="font-semibold">#<%= data.order_id %></p>
+              </div>
+            </div>
+          </td>
+
+          <td class="px-4 py-3 text-sm"><%= data.totalQuantity %></td>
+          <td class="px-4 py-3 text-sm"><%= data.totalPrice %></td>
+          <td class="px-4 py-3 text-sm"><%= data.paymentMethod %></td>
+          <td class="px-4 py-3 text-sm"><%= formatedDate %></td>
+          <td class="px-4 py-3 text-sm">
+            <%if(data.orderStatus ==='Pending'){ %>
+                <h2 class="text-warning"><%= data.orderStatus %></h2>
+            <% }else if(data.orderStatus ==='Confirmed' || data.orderStatus ==='Delivered'){%>
+                <h6 class="text-success"><%= data.orderStatus %></h6>
+            <%}else if(data.orderStatus ==='Returned'){%>
+                <h6 class="text-dark"><%= data.orderStatus %></h6>
+            <%}else if(data.orderStatus ==='Returned'){%>
+                <h6 class="text-dark"><%= data.orderStatus %></h6>
+            <%}else if(data.orderStatus ==='Cancelled'){%>
+                <h6 class="text-danger"><%= data.orderStatus %></h6>
+            <%} else if(data.orderStatus ==='Shipped'){ %>
+                <h6 class="text-info"><%= data.orderStatus %></h6>
+            <%}%>
+            
+          </td>
+          <td class="px-4 py-3 text-sm">
+    <div class="relative" style="z-index: 100;">
+      <a href="#" onclick="toggleDropdown(event, this)"><i class='bx bx-dots-vertical-rounded'></i></a>
+      <div id="dropdownMenu" class="hidden absolute z-10 w-48 py-2 mt-2 origin-top-right bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700" style="background-color: #fff; z-index: 10;">
+        <a href="/admin/orderDetails/<%= data._id %>" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Details</a>
+        <% if(data.orderStatus == 'Pending'){ %>
+            <a href="/admin/updateOrderStatus/<%= data._id %>/Confirmed" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Confirm</a>
+            <a href="/admin/updateOrderStatus/<%= data._id %>/Cancelled" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Cancel</a>
+        <% } else if(data.orderStatus!='Delivered' && data.orderStatus!='Cancelled' ) {%>
+          <a href="/admin/updateOrderStatus/<%= data._id %>/Delivered" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Delivered</a>
+          <a href="/admin/updateOrderStatus/<%= data._id %>/Shipped" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Shipped</a>
+          <% } %>
+        </div>
+    </div>
+  </td>
+          
+          
+        </tr>
+
+        <% }) } %>
+      </tbody>
+    </table>
+  </div>
+
+
+
+  <!-- ------------------------ pagination div ---------------  -->
+<div class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
+  <span class="flex items-center col-span-3">Page <%= page %> of <%= totalPages %></span>
+  <span class="col-span-2"></span>
+  <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+    <nav aria-label="Table navigation">
+      <ul class="inline-flex items-center">
+        <% if (page > 1) { %>
+          <li>
+            <a href="?page=<%= page - 1 %>&category=<%= category %>&order=<%= order %>" class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">Prev</a>
+          </li>
+        <% } %>
+
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li>
+            <a href="?page=<%= i %>&category=<%= category %>&order=<%= order %>"
+              class="px-3 py-1 rounded-md <%= page === i ? 'bg-purple-600 text-white' : '' %> focus:outline-none focus:shadow-outline-purple">
+              <%= i %>
+            </a>
+          </li>
+        <% } %>
+
+        <% if (page < totalPages) { %>
+          <li>
+            <a href="?page=<%= page + 1 %>&category=<%= category %>&order=<%= order %>" class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">Next</a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  </span>
+</div>
+
+</div>
+

@@ -1,0 +1,209 @@
+<%- include('../layout/header') %>
+<%- include('../layout/navBar') %>
+
+<!-- ----------------- Notification section-----------------  -->
+<% if(notification.status === 'error') { %>
+  <script>notificationMessage("<%= notification.message %>")</script>
+<% } else if(notification.status === 'success') { %>
+  <script>notificationMessage("<%= notification.message %>")</script>
+<% } %>
+
+<section class="h-100" style="background-color: #fff !important;">
+  <div class="container-fluid h-100 py-5 px-5">
+    <div class="row d-flex justify-content-center align-items-start h-100">
+      <div class="col-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-normal mb-0 text-black">Shopping Cart</h3>
+        </div>
+        <% if (productData.length === 0) { %>
+          <div class="text-center">
+            <img src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/3bd05447340145.587755b7635a0.gif">
+            <h5>Your cart is empty!</h5>
+            <p>Look like you have not added anything to cart. Go ahead & explore top categories.</p>
+            <a href="/shop" class="btn btn-light border mt-2"> Shop Now </a>
+          </div>
+        <% } else { %>
+          <% productData.forEach((product) => {
+            let product_data = product.product_data[0]; %>
+            <% if (product_data.product_stock <= 0 || product_data.product_status != 1 || product_data.product_stock < product.quantity) { %>
+              <div class="card rounded-3 mb-4" style="background-color: rgb(211, 204, 204);">
+                <div class="card-body p-4">
+                  <div class="row d-flex justify-content-between align-items-center">
+                    <div class="col-md-2 col-lg-2 col-xl-2">
+                      <img src="../../<%= product_data.product_image[0] %>" class="img-fluid rounded-3" alt="Cotton T-shirt">
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-xl-3">
+                      <p class="lead fw-normal mb-2"><%= product_data.product_name %></p>
+                      <% if (product_data.product_stock > 0 && product_data.product_status == 1 && product_data.product_stock < product.quantity) { %>
+                        <p><span class="text-muted">You can purchase a maximum of <%= product_data.product_stock %> Quantity</span></p>
+                      <% } else { %>
+                        <p><span class="text-muted"><%= product_data.category_name %></span></p>
+                      <% } %>
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                      <button class="btn btn-link px-2" onclick="changeInputValue(this, 'decrease', '<%= product._id %>')">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <input id="stock-input-<%= product._id %>" data-product-id="<%= product._id %>" min="0" max="<%= product_data.product_stock %>" name="quantity" value="<%= product.quantity %>" type="number" class="form-control form-control-sm quantity-bar text-center" style="width:60px;" readonly>
+                      <button class="btn btn-link px-2" onclick="changeInputValue(this, 'increase', '<%= product._id %>')">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                    <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                      <h6 class="">OUT OF STOCK</h6>
+                    </div>
+                    <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                      <a href="/remove-cart-item/<%= product._id %>" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% } else { %>
+              <div class="card rounded-3 mb-4">
+                <div class="card-body p-4">
+                  <div class="row d-flex justify-content-between align-items-center">
+                    <div class="col-md-2 col-lg-2 col-xl-2">
+                      <img src="../../<%= product_data.product_image[0] %>" class="img-fluid rounded-3" alt="Cotton T-shirt">
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-xl-3">
+                      <p class="lead fw-normal mb-2"><%= product_data.product_name %></p>
+                      <p><span class="text-muted color"><%= product_data.category_name %></span></p>
+                      <span class="text-muted"><i class="fas fa-shopping-basket fa-sm "></i><%= product_data.product_stock%></span>
+              <span class="text-success ms-2">In stock</span>
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                      <button class="btn btn-link px-2" onclick="changeInputValue(this, 'decrease', '<%= product._id %>','<%= product_data.product_stock%>')">
+                        <i class="fas fa-minus"></i> 
+                      </button>
+                      <input id="stock-input-<%= product._id %>" data-product-id="<%= product._id %>" min="1" max="<%= product_data.product_stock %>" name="quantity" value="<%= product.quantity %>" type="number" class="form-control form-control-sm quantity-bar text-center" style="width:60px;">
+                      <button class="btn btn-link px-2" onclick="changeInputValue(this, 'increase', '<%= product._id %>','<%= product_data.product_stock%>')">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                    <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                      <%if(product_data.offerData.offer_amount){%>
+                      <h5 class="mb-0 color">₹<%= product_data.offerData.offer_amount %> <span class="cross-price"> ₹<%= product_data.product_price %></span></h5>
+
+                        <%} else {%>
+                      <h5 class="mb-0 color">₹<%= product_data.product_price %></h5>
+
+                        <% } %>
+                    </div>
+                    <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                      <a href="/remove-cart-item/<%= product._id %>" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          <% }) %>
+        <% } %>
+      </div>
+      <div class="col-4">
+        
+        <div class="card shadow-0 border">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Product:</p>
+              <p class="mb-2">Amount</p>
+            </div>
+            <% 
+            let totalPrice = 0;
+            productData.forEach(product => {
+              if (product.cart_status === 1) {
+                let singleProduct = product.product_data[0];
+                if(singleProduct.offerData.offer_amount){
+                  var productPrice = singleProduct.offerData.offer_amount * product.quantity;
+                }else{
+                  var productPrice = singleProduct.product_price * product.quantity;
+                }
+                
+                totalPrice = totalPrice + productPrice;
+            %>
+            <div class="d-flex justify-content-between">
+              <span><%= singleProduct.product_name %> &nbsp; x &nbsp; <%= product.quantity %></span>
+              <span>₹<%= productPrice %></span>
+            </div>
+            <% 
+              }
+            }); 
+            %>
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">GST:</p>
+              <% const GST = Math.round((18 / 100) * totalPrice * 100) / 100; %>
+              <p class="mb-2"><%= GST %></p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Shipping:</p>
+              <% 
+              let Shipping = 0;
+              if (totalPrice <= 1000 && totalPrice > 0) {
+                Shipping = 25;
+              } 
+              %>
+              <p class="mb-2"><%= Shipping > 0 ? Shipping : "Free shipping" %></p>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+              <% totalPrice = totalPrice + GST + Shipping; %>
+              <p class="mb-2">Total price:</p>
+              <p class="mb-2 fw-bold" id="total-price" data-price="<%= totalPrice %>"><%= totalPrice.toFixed(2) %></p>
+            </div>
+            <div class="mt-3">
+              <% if (productData.length !== 0) { %>
+                <a href="/checkout" class="btn btn-success w-100 shadow-0 mb-2"> Check Out </a>
+                <a href="/shop" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Function to change the input value and dispatch the input event
+function changeInputValue(button, action, productId,stock) {
+ 
+    const inputElement = button.parentNode.querySelector(`input[data-product-id='${productId}']`);
+    if(inputElement.value == stock  && action =='increase'){
+     notificationMessage("Stock available is "+ stock)
+    }else if(inputElement.value == 1 && action === 'decrease')
+     {
+      notificationMessage("Minimum product quantity should be 1");
+     }
+     else{
+      if (action === 'decrease') {
+        inputElement.stepDown();
+    } else if (action === 'increase') {
+        inputElement.stepUp();
+    }
+    inputElement.dispatchEvent(new Event('input'));
+    updateProductQuantity(productId, inputElement.value);
+     }
+    
+}
+
+
+// Function to update the product quantity in the database
+function updateProductQuantity(productId, quantity) {
+  console.log(quantity)
+    fetch(`/update-cart-item/${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ quantity: quantity })
+    })
+    .then(response => {
+                return response.json()})
+    .then(data => {
+        console.log('Update successful:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+</script>

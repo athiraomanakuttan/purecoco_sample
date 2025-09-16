@@ -1,0 +1,62 @@
+<%-include('../layout/header') %>
+
+<style>
+    .video-background {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full height */
+    overflow: hidden;
+}
+
+#background-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    transform: translate(-50%, -50%);
+    background-size: cover;
+}
+.content{
+    width: 40%;
+    height: auto;
+    margin: auto;
+    border: 2px solid;
+    text-align: center;
+    margin-top: 10rem;
+    background-color: #003241;
+    border-radius: 21px;
+    box-shadow: 10px 10px 20px;
+}
+.content img{
+    width: 50%;
+    
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+</style>
+
+
+<div class="video-background">
+    <video autoplay muted loop id="background-video">
+        <source src="../../user/assets/web-img/Successfull.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="content">
+       <!-- <img src="../../user/assets/web-img/greentick (1).gif" alt=""> -->
+       <img src="../../user/assets/web-img/gtick.gif" alt="">
+       
+       <h2 class="text-light">Order Has Been Placed</h2>
+    </div>
+</div>
+
+<script>
+    setTimeout(()=>{
+        window.location.href='/view-cart'
+    },2000)
+</script>

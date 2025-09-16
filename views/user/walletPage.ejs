@@ -1,0 +1,90 @@
+<%-include('../layout/header') %> <%-include('../layout/navBar') %>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="wallet-content p-3 border">
+        <h1>Your wallet</h1>
+        <p>Available Balance <h3 class="color">₹ <%= (walletData.wallet_balance).toFixed(2) %></h3></p>
+        <!-- <button id="add-to-wallet-button">Add to Wallet</button>
+        <input type="number" id="amount" placeholder="Enter amount"> -->
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="transaction-contnets p-3 border">
+        <h1>Transaction History</h1>
+        <% if(walletData.transaction.length >0){ %>
+          <div class="transation-head flex border p-2 mt-4 color">
+            <div class="flex-row color text-center">
+              <h6 >Date</h6>
+              
+            </div>
+            <div class="flex-row text-center">
+              <h6>Type</h6>
+              
+            </div>
+            <div class="flex-row text-center ">
+              <h6>Order Id</h6>
+              
+            </div>
+            <div class="flex-row text-center ">
+             
+              <h6>Amount</h6>
+              
+            </div>
+          </div>
+          <% walletData.transaction.forEach(element => { 
+            const transDate = formatDate(element.transaction_date)
+            %>
+            <div class="transation-row flex border p-3 mt-2">
+              <div class="flex-row text-center">
+                <h5 class="second-color"><%= transDate.day %></h5>
+                <h6><%= transDate.month %> <%= transDate.year %></h6>
+              </div>
+              <div class="flex-row text-center">
+                <% if(element.transactionType == 'Credited'){ %>
+                  <img src="../../user/assets/web-img/credited.png" alt="">
+                  
+                  <%}else{%>
+                  <img src="../../user/assets/web-img/debited.png" alt="">
+                    <% } %>
+                <p><%= element.transactionType%></p>
+                
+              </div>
+              <div class="flex-row">
+                <h6>#<%= element.order_id  %></h6>
+                
+              </div>
+              <div class="">
+               
+                <h5 class="second-color">₹ <%=element.wallet_amount  %></h5>
+              </div>
+            </div>
+            <% }); %>
+          
+          
+          <% } else{
+            %>
+            <h6>No Transactions Yet</h6>
+            <% } %>
+        
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+  document.getElementById('add-to-wallet-button').onclick = function(e) {
+    var amount = document.getElementById('amount').value * 100; // Convert to paise
+    if (amount > 0) {
+        createOrder(amount);
+    } else {
+        alert('Please enter a valid amount');
+    }
+}
+
+function createOrder(amount) {
+  
+}
+</script>

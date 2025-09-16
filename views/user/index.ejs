@@ -1,0 +1,212 @@
+
+<%-include('../layout/header') %>
+<%- include('../layout/navBar') %>
+
+	<body>
+
+		<!-- Start Hero Section -->
+			<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<p class="mb-4">Welcome To Pure QoQO</p>
+								
+								<h1>From The Loving <span clsas="d-block">Mother's of Kerala</span></h1>
+								<p><a href="/shop" class="btn btn-secondary me-2">Shop Now</a><a href="#product-section" class="btn btn-white-outline">Explore</a></p>
+							</div>
+						</div>
+						<div class="col-lg-7">
+							<div class="hero-img-wrap">
+								<img src="../../user/assets/Hero-img.png" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- End Hero Section -->
+
+		<!-- Start Product Section -->
+		<div class="product-section" id="product-section">
+			<div class="container">
+				<div class="row">
+
+					<!-- Start Column 1 -->
+					<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
+						<h2 class="mb-4 section-title">Meticulously crafted with exceptional care.</h2>
+						<p class="mb-4">each product with love and care, ensuring they are safe, high-quality, and free from harmful chemicals.</p>
+						<p><a href="/shop" class="btn">Shop Now</a></p>
+					</div> 
+					<!-- End Column 1 -->
+
+					<!-- Start Column 2 -->
+					<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+						<a class="product-item" href="/shop">
+							<img src="../../user/assets/Hair.jpg" class="img-fluid product-thumbnail" style="border-radius:10px;">
+							<h3 class="product-title">We Nourish Your Hair</h3>
+
+							<span class="icon-cross">
+								<img src="../../user/assets/web-img/cross.svg" class="img-fluid">
+							</span>
+						</a>
+					</div> 
+					<!-- End Column 2 -->
+
+					<!-- Start Column 3 -->
+					<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+						<a class="product-item" href="/shop">
+							<img src="../../user/assets/Skin.jpg" class="img-fluid product-thumbnail">
+							<h3 class="product-title">We Care For Your Health.</h3>
+
+							<span class="icon-cross">
+								<img src="../../user/assets/web-img/cross.svg" class="img-fluid">
+							</span>
+						</a>
+					</div>
+					<!-- End Column 3 -->
+
+					<!-- Start Column 4 -->
+					<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+						<a class="product-item" href="/shop">
+							<img src="../../user/assets/skincare1.jpg" class="img-fluid product-thumbnail">
+							<h3 class="product-title">We Refine Your Skin.</h3>
+
+							<span class="icon-cross">
+								<img src="../../user/assets/web-img/cross.svg" class="img-fluid">
+							</span>
+						</a>
+					</div>
+					<!-- End Column 4 -->
+					
+
+				</div>
+			</div>
+		</div>
+		<!-- End Product Section -->
+
+		<!-- Start Why Choose Us Section -->
+		<div class="why-choose-section" id="why-choose-section">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-6  col-sm-6">
+						<h2 class="section-title">Why Choose Us</h2>
+						<p>Let us show you why we're the perfect choice for your needs. Explore the reasons why so many trust us.</p>
+
+						<div class="row my-5">
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="../../user/assets/web-img/truck.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Fast &amp; Free Shipping</h3>
+									<p>Get it fast, get it free. Enjoy speedy delivery at no extra cost. Skip the shipping fees. We deliver your order quickly and free of charge.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="../../user/assets/web-img/bag.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Easy to Shop</h3>
+									<p>Shop with ease. Our user-friendly platform makes finding what you need a breeze. pen_spark
+										</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="../../user/assets/web-img/support.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>24/7 Support</h3>
+									<p>Never get stuck. Our dedicated support team is available around the clock to answer your questions.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="../../user/assets/web-img/return.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Hassle Free Returns</h3>
+									<p>Change your mind? No problem. Enjoy stress-free returns with our easy process.</p>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="col-lg-5 col-sm-6">
+						<div class="img-wrap">
+							<img src="../../user/assets/About us.jpg" alt="Image" class="img-fluid">
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End Why Choose Us Section -->
+		<!-- ------------------ Product section here starts -------------------  -->
+		<div class="untree_co-section product-section">
+		    <div class="container">
+				<h2 class="section-title mt-5 text-center">Shop with Us</h2>
+				<p class="text-center mb-5">Enjoy shopping for natural, non-chemical, pure organic products.</p>
+		      	<div class="row">
+					<%productData.forEach((data)=>{
+						let img= data.product_image[0]
+						%>
+					<!-- Start Column 1 -->
+					<div class="col-12 col-md-4 col-lg-3 mb-5">
+						<a class="product-item" href="/view-product/<%=data._id %>">
+							<img src="../../<%=img %>" class="img-fluid product-thumbnail" style="border-radius:5px;">
+							<div class="flex"><p class="color"><%=data.category_name %></p><i class='bx bx-heart card-wish-icon'></i></div>
+							<h3 class="product-title"><%=data.product_name %></h3>
+							<strong class="product-price color">₹<%=data.product_price %></strong>&nbsp;&nbsp;<%=data.product_quantity %>
+							<h3 class="product-price">Rating : <i class='bx bxs-star rating' ></i> 4.5</h3>
+
+							<span class="icon-cross">
+								<img src="../../user/assets/web-img/cross.svg" class="img-fluid">
+							</span>
+						</a>
+					</div> 
+					<!-- End Column 1 -->
+					<%})%>
+		      		
+						
+		      	</div>
+		    </div>
+		</div>
+		<!-- Start We Help Section -->
+		<div class="we-help-section" id="we-help-section">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-7 mb-5 mb-lg-0">
+						<div class="imgs-grid">
+							<div class="grid grid-1"><img src="../../user/assets/about3.jpg" alt="Untree.co"></div>
+							<div class="grid grid-2"><img src="../../user/assets/about6.jpg" alt="Untree.co"></div>
+							<div class="grid grid-3"><img src="../../user/assets/about5.jpg" alt="Untree.co"></div>
+						</div>
+					</div>
+					<div class="col-lg-5 ps-lg-5">
+						<h2 class="section-title mb-4">Our Essence collection</h2>
+						<p>Born from a passion for natural beauty and wellness, Pure Qo Qo was founded with the vision of creating skincare solutions that are not only effective but also pure and sustainable. We harness the time-tested benefits of coconut oil, cherished for its nourishing, hydrating, and rejuvenating properties, to develop products that enhance your natural beauty. </p>
+						<ul class="list-unstyled custom-list my-4">
+							<li>Our range includes a variety of skincare essentials designed to cater to all skin types and needs - chan you short the point</li>
+							<li>Each item in our collection is formulated to deeply hydrate and promote a radiant complexion.</li>
+							<li>leave your skin feeling soft, supple, and revitalized.</li>
+							<li>100% Natural. No added chemicals</li>
+						</ul>
+						<p><a href="/shop" class="btn">Shop Now</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+<%- include('../layout/footer')  %>
+		
+
+		
+	</body>
+
+</html>
