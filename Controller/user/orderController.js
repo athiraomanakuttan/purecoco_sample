@@ -77,7 +77,11 @@ const viewOrders= async (req,res)=>{
                         order_date: order.createdAt,
                         order_status: order.orderStatus,
                         payment_method: order.paymentMethod,
-                        order_object_id: order._id
+                        order_object_id: order._id,
+                        product_category:product.product_category,
+                        product_quantity:product.product_quantity,
+                        product_price:product.product_price
+                        
                     })
                 }
             })

@@ -14,14 +14,13 @@
             <!-- Active Products Section -->
             <h5 class="mb-3">Active Products</h5>
             
-            <!-- <% let total =0;
+             <% let total =0;
             let totalQuantity = 0;
             if(activeProducts && activeProducts.length > 0) {
                 activeProducts.forEach(product => { 
                     total+=(product.product_price * product.product_quantity)
                     totalQuantity += product.product_quantity
-                    %>
-                 -->
+                    %> 
            
             <div class="card border shadow-none mb-3">
                 <div class="card-body">
@@ -44,7 +43,6 @@
                                     <i class="bx bxs-star-half text-warning"></i>
                                 </p>
                                 <p class="mb-0 mt-1">Category : <span class="fw-medium color"><%=product.product_category %></span></p>
-                                <p class="mb-0 mt-1">Payment : <span class="fw-medium "><%= productData.paymentMethod  %></span></p>
                                 <p>
                                 </div>
                                 
@@ -92,9 +90,14 @@
             <% } %>
             
             <!-- Cancelled Products Section -->
-            <% if(cancelledProducts && cancelledProducts.length > 0) { %>
+            <% if(cancelledProducts && cancelledProducts.length > 0) {
+                console.log("cancelledProducts", cancelledProducts)
+
+                
+            %>
                 <h5 class="mb-3 mt-4" style="color: #dc3545;">Cancelled Products</h5>
-                <% cancelledProducts.forEach(product => { %>
+                
+                cancelledProducts.forEach(product => { %>
                     <div class="card border shadow-none mb-3" style="opacity: 0.7; border-left: 4px solid #dc3545;">
                         <div class="card-body">
                             <div class="d-flex align-items-center border-bottom pb-3">
@@ -201,7 +204,7 @@
                     </div>
                 </div>
             </div>
-            <% const address = productData.address || {} %>
+            <% const address = productData?._doc?.address || {} %>
             <div class=" mt-lg-3 mt-3"><div class="card border shadow-none">
                     <div class="card-header bg-transparent border-bottom py-3 px-4">
                         <h6 class="font-size-16 mb-0">Shipping Address</h6>
