@@ -109,9 +109,12 @@
                       
                       &nbsp;&nbsp;<%= data.product_quantity %>
                       <h3 class="product-price">Rating: <i class='bx bxs-star rating'></i> 4.5</h3>
-                      <span class="icon-cross" id="icon-cross" data-id="<%= data._id %>">
+                      <% if(data.product_stock>0){ %>
+                          <span class="icon-cross" id="icon-cross" data-id="<%= data._id %>">
                         <img src="../../user/assets/web-img/cross.svg" class="img-fluid">
                       </span>
+                      <% } %>
+                      
                       
                     </a>
                   </div>
@@ -240,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
   } else if(data.action === 'cartIn')
   {
     
-    notificationMessage("Product already in cart")
+    notificationMessage("Product already in cart","error")
   }
 })
 .catch(error => console.error('Error:', error));

@@ -3,7 +3,7 @@
 
   <!-- ----------------- Notification section-----------------  -->
  <% if(notification.status === 'error') {%>
-  <script>notificationMessage("<%=notification.message%>")</script>
+  <script>notificationMessage("<%=notification.message%>",'error')</script>
  <%  } else if(notification.status=== 'success'){%>
   <script>successMessage("<%=notification.message%>")</script>
  <%  }%>

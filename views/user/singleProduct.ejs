@@ -3,7 +3,7 @@
 
 <!-- ----------------- Notification section-----------------  -->
  <% if(notification.status === 'error') {%>
-  <script>notificationMessage("<%=notification.message%>")</script>
+  <script>notificationMessage("<%=notification.message%>",'error')</script>
  <%  } else if(notification.status=== 'success'){%>
   <script>notificationMessage("<%=notification.message%>")</script>
  <%  }%>
@@ -255,7 +255,7 @@
                   button.innerHTML ="<i class='bx bxs-heart card-wish-icon'></i> Save"
                     notificationMessage("Product Removed from wishlist");
                 } else if (data.action === 'cartIn') {
-                    notificationMessage("Product already in cart");
+                    notificationMessage("Product already in cart",'error');
                   button.innerHTML ="<i class='bx bxs-heart card-wish-icon'></i> Save"
 
                 }

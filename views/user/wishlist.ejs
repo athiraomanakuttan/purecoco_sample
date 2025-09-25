@@ -57,9 +57,13 @@
     <% } %>
     &nbsp;&nbsp;<%= data.product_quantity %>
     <h3 class="product-price">Rating: <i class='bx bxs-star rating'></i> 4.5</h3>
-    <span class="icon-cross" data-id="<%= data._id %>">
+    <% if(data.product_stock > 0){%>
+      <span class="icon-cross" data-id="<%= data._id %>">
       <img src="../../user/assets/web-img/cart-img.png" class="img-fluid" width="80%">
     </span>
+    <% } %>
+    
+    
   </a>
 </div>
     <% 
@@ -152,7 +156,7 @@
           button.innerHTML = "<i class='bx bx-heart card-wish-icon'></i>";
           location.reload();
         } else if(data.action === 'cartIn') {
-          notificationMessage("Product already in cart");
+          notificationMessage("Product already in cart","error");
         }
       })
       .catch(error => console.error('Error:', error));

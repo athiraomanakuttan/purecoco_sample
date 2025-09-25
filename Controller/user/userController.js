@@ -373,6 +373,7 @@ const googleLogin = async (req,res)=>{
     if(email!=='' || email!== null)
       {
         const getUser = await clientCollection.findOne({customer_emailid : email})
+        
         if(getUser!== null && getUser.customer_status==1)
           {
             req.session.user = getUser._id;
@@ -396,12 +397,15 @@ const googleLogin = async (req,res)=>{
                 timestamp:Date.now(),
                 customer_password:hashedPassword
               }
+              
               const newUser = await clientCollection.insertMany(data)
+              console.log("newUser", newUser)
               if(newUser){
                 
               req.session.user = newUser._id;
               req.session.email = newUser.customer_emailid;
-              res.redirect('/')
+              console.log("inside of this")
+              return res.redirect('/')
               }
               else
               {
@@ -417,7 +421,7 @@ const googleLogin = async (req,res)=>{
   }
   catch(err)
   {
-    console.log(err)
+    console.log("rrrrrrr==============",err)
     actionResponce={
       status:false,
       message:"something went Wrong. Please try again"

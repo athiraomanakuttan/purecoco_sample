@@ -25,12 +25,13 @@ function successNotification(message)
   });
 }
 
-function notificationMessage(message)
+function notificationMessage(message, type="success")
 {
   Swal.fire({
     position: "top-end",
     text: message,
     showConfirmButton: false,
+    color:type==="error"?"red" : "black",
     timer: 2500
   });
 }

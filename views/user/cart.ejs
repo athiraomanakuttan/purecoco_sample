@@ -3,7 +3,7 @@
 
 <!-- ----------------- Notification section-----------------  -->
 <% if(notification.status === 'error') { %>
-  <script>notificationMessage("<%= notification.message %>")</script>
+  <script>notificationMessage("<%= notification.message %>","error")</script>
 <% } else if(notification.status === 'success') { %>
   <script>notificationMessage("<%= notification.message %>")</script>
 <% } %>
@@ -75,7 +75,7 @@
                       <button class="btn btn-link px-2" onclick="changeInputValue(this, 'decrease', '<%= product._id %>','<%= product_data.product_stock%>')">
                         <i class="fas fa-minus"></i> 
                       </button>
-                      <input id="stock-input-<%= product._id %>" data-product-id="<%= product._id %>" min="1" max="<%= product_data.product_stock %>" name="quantity" value="<%= product.quantity %>" type="number" class="form-control form-control-sm quantity-bar text-center" style="width:60px;">
+                      <input id="stock-input-<%= product._id %>" data-product-id="<%= product._id %>" min="1" max="5" name="quantity" value="<%= product.quantity %>" type="number" class="form-control form-control-sm quantity-bar text-center" style="width:60px;">
                       <button class="btn btn-link px-2" onclick="changeInputValue(this, 'increase', '<%= product._id %>','<%= product_data.product_stock%>')">
                         <i class="fas fa-plus"></i>
                       </button>
@@ -167,11 +167,16 @@
 function changeInputValue(button, action, productId,stock) {
  
     const inputElement = button.parentNode.querySelector(`input[data-product-id='${productId}']`);
-    if(inputElement.value == stock  && action =='increase'){
-     notificationMessage("Stock available is "+ stock)
+    console.log("inputElement.value",inputElement.value, action)
+    if((inputElement.value == stock)  && action =='increase'){
+      
+     notificationMessage("Stock available is "+ stock,"error")
+    } else if(inputElement.value>=5  && action =='increase'){
+      git 
+     notificationMessage("Maximim limit reached","error")
     }else if(inputElement.value == 1 && action === 'decrease')
      {
-      notificationMessage("Minimum product quantity should be 1");
+      notificationMessage("Minimum product quantity should be 1" ,"error");
      }
      else{
       if (action === 'decrease') {

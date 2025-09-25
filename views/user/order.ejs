@@ -4,7 +4,7 @@
 <!-- ----------------- Notification section-----------------  -->
 <% if(notification.status==='error' ) {%>
 <script>
-  notificationMessage("<%=notification.message%>")
+  notificationMessage("<%=notification.message%>","error")
 </script>
 <% } else if(notification.status==='success' ){%>
 <script>
@@ -275,8 +275,8 @@
 </div>
 <% } %>
 <script>
-  window.__USER_ID__ = '<%= totalOrder && totalOrder[0] ? totalOrder[0].customer_id : (orderData && orderData[0] ? orderData[0].customer_id : (pendingOrders && pendingOrders[0] ? pendingOrders[0].customer_id : '')) %>'
-  window.__LOCK_USER_ID__ = '<%= typeof user_id !== 'undefined' ? user_id : '' %>'
+  window.__USER_ID__ = '<%= totalOrder && totalOrder[0] ? totalOrder[0].customer_id : (orderData && orderData[0] ? orderData[0].customer_id : (pendingOrders && pendingOrders[0] ? pendingOrders[0].customer_id : "")) %>'
+  window.__LOCK_USER_ID__ = '<%= typeof user_id !== "undefined" ? user_id : "" %>'
 </script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="../../user/orderScript.js"></script>
