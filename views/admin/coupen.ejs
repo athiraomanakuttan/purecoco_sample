@@ -239,9 +239,7 @@ let minDate = convertDateString(new Date());
     let coupenOfferAmount = parseFloat(document.getElementById('coupen_offer_amount').value);
     let coupenAmountLimit = parseFloat(document.getElementById('coupen_amount_limit').value);
     let errorMessage = '';
-    console.log(coupen_name)
     if(coupen_name == null || coupen_name === undefined || coupen_name === ""){
-    console.log("inside")
     errorMessage = 'Coupen Name can not be Empty';
 
     }

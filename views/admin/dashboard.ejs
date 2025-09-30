@@ -203,7 +203,6 @@
         ];
         const salesData = Array(12).fill(0);
         const countData = Array(12).fill(0);
-        console.log("==================================================",data,)
         data.forEach(item => {
           salesData[item._id.month - 1] = item.totalSales;
           countData[item._id.month - 1] = item.count;

@@ -308,7 +308,6 @@ view_coupen.addEventListener('click', () => {
                 }
    return response.json()})
   .then(data => {
-    console.log(data)
     const couponDivs = document.getElementById('coupen-divs');
     couponDivs.style.display = couponDivs.style.display === 'none' ? 'block' : 'none';
 

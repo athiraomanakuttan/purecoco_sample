@@ -69,7 +69,7 @@ const addCoupen = async (req, res) => {
     data.coupen_code = await getCoupenCode();
     try {
       const addCoupen = await coupenCollection.insertMany(data);
-      console.log(addCoupen);
+     
       if (addCoupen) {
         globalNotification = {
           status: "success",
@@ -230,7 +230,6 @@ async function checkCoupenStatus() {
       { coupen_expiry: { $lt: currentDate } },
       { $set: { coupen_status: 0, updatedAt: currentDate } }
     );
-    console.log(result);
   } catch (err) {
     console.log(err);
   }

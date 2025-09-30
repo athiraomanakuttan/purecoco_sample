@@ -223,7 +223,6 @@ document.addEventListener('DOMContentLoaded', function () {
   return response.json();  // Parse the response as JSON
 })
 .then(data => {
-  console.log("data", data)
   if (!data.success) {
     if (data.redirect) {
       window.location.href = data.redirect;
@@ -257,7 +256,6 @@ document.addEventListener('DOMContentLoaded', function () {
     button.addEventListener('click', (e) => {
         e.preventDefault();
         const productId = button.getAttribute('data-id');
-        console.log("icon-cross",productId);
 
         fetch(`/wishlist-to-cart/${productId}`, {
             method: "GET"
@@ -274,7 +272,6 @@ document.addEventListener('DOMContentLoaded', function () {
     showConfirmButton: false,
     timer: 2500
   });
-            console.log(data, "data");
         }).catch((err) => {
             console.log(err);
         });

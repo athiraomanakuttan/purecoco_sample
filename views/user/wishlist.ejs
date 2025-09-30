@@ -77,11 +77,9 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll(".icon-cross").forEach(button => {
-    console.log("Adding event listener to icon-cross");
     button.addEventListener('click', (e) => {
       e.preventDefault();
       const productId = button.getAttribute('data-id');
-      console.log("icon-cross clicked", productId);
 
       fetch(`/wishlist-to-cart/${productId}`, {
         method: "GET"
@@ -98,7 +96,6 @@
           showConfirmButton: false,
           timer: 2500
         });
-        console.log(data, "data");
       }).catch((err) => {
         console.log(err);
       });
@@ -136,7 +133,6 @@
         return response.json();  // Parse the response as JSON
       })
       .then(data => {
-        console.log("data", data)
         if (!data.success) {
           if (data.redirect) {
             window.location.href = data.redirect;

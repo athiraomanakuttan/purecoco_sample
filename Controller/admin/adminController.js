@@ -77,7 +77,6 @@ const clientsListLoad = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = 10;
   const skip = (page - 1) * limit;
-  let responce = {};
 
   if (search !== "") {
     query = {
@@ -108,16 +107,19 @@ const clientsListLoad = async (req, res) => {
 
     const userCount = await getUserCount();
 
+    // No need to pass notification - it's in res.locals from middleware
     res.render("./admin/userList", {
       clientData,
       dateFormat,
       page,
       totalPages,
-      responce,
       userCount,
     });
   } catch (err) {
     console.log(err);
+    req.flash('status', 'error');
+    req.flash('message', 'Error loading clients');
+    res.redirect('/admin/clients');
   }
 };
 
@@ -127,8 +129,7 @@ const clientsListLoad = async (req, res) => {
 
 const updateClientStatus = async (req, res) => {
   const status = Number(req.params.status);
-  const id = req.params.id; // Use response for consistency
-  let search = "";
+  const id = req.params.id;
 
   if (status >= -1 && status <= 1) {
     try {
@@ -136,14 +137,44 @@ const updateClientStatus = async (req, res) => {
         customer_status: status,
       });
 
-      if (updateResult != null) req.flash("message", "Client status updated");
+      if (updateResult != null) {
+        let message = '';
+        if (status === 1) {
+          message = 'Client enabled successfully';
+        } else if (status === 0) {
+          message = 'Client disabled successfully';
+        } else if (status === -1) {
+          message = 'Client deleted successfully';
+        }
+        
+        req.flash('status', 'success');
+        req.flash('message', message);
+        
+        // Return JSON for fetch requests
+        return res.json({ 
+          success: true, 
+          message: message 
+        });
+      }
     } catch (err) {
-      console.log("cant update the user" + err);
+      console.error("Can't update the client: " + err);
+      req.flash('status', 'error');
+      req.flash('message', 'Failed to update client status');
+      
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Failed to update client status' 
+      });
     }
   } else {
-    console.log("cant update the user");
+    req.flash('status', 'error');
+    req.flash('message', 'Invalid operation');
+    
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Invalid operation' 
+    });
   }
-  res.redirect(`/admin/clients`);
 };
 
 // --------------------------------------------------- Admin Logout ---------------------------

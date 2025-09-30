@@ -399,12 +399,10 @@ const googleLogin = async (req,res)=>{
               }
               
               const newUser = await clientCollection.insertMany(data)
-              console.log("newUser", newUser)
               if(newUser){
                 
               req.session.user = newUser._id;
               req.session.email = newUser.customer_emailid;
-              console.log("inside of this")
               return res.redirect('/')
               }
               else
@@ -421,7 +419,6 @@ const googleLogin = async (req,res)=>{
   }
   catch(err)
   {
-    console.log("rrrrrrr==============",err)
     actionResponce={
       status:false,
       message:"something went Wrong. Please try again"
@@ -430,7 +427,6 @@ const googleLogin = async (req,res)=>{
     res.render("./user/signup", { data, actionResponce });
     
   }
-  console.log(email)
   res.redirect('/')
 }
 

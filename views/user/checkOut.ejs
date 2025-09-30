@@ -412,8 +412,6 @@
         const wallet_button = document.getElementById('pay-methodoption2')
         const cod_button = document.getElementById('pay-methodoption3')
         const wallet_amount = wallet_button.getAttribute('data-wallet-amount')
-        console.log("totalPrice",totalPrice)
-        console.log("wallet_amount",wallet_amount)
         if(totalPrice <= wallet_amount)
         {
             wallet_button.setAttribute('enabled','enabled')

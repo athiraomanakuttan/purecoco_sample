@@ -72,7 +72,6 @@
 
                         // if user confirm to resend the otp then using fetch resend the otp
                         if (result.isConfirmed) {
-                            console.log(otpEmail.innerHTML);
 
                             const URL = `/resendPasswordOTP`
                             fetch(URL, {

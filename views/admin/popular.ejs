@@ -32,7 +32,6 @@ async function getPopularCategory(){
         }
 
         const data = await response.json();
-        console.log("Data: ", data);
 
         if (data.length === 0) {
             document.getElementById('popular-products-container').innerHTML = '<h1 class="text-center">No data found</h1>';
@@ -83,7 +82,6 @@ async function getPopularCategory(){
         }
 
         const data = await response.json();
-        console.log("Data: ", data);
 
         if (data.length === 0) {
             document.getElementById('popular-products-container').innerHTML = '<h1 class="text-center">No data found</h1>';

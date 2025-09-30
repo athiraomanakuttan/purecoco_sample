@@ -68,7 +68,6 @@ const updateOrderStatus= async (req,res)=>{
         {
             try
             {
-              console.log("orderId", order_id, "status",status,)
                 // const updateStatus = await orderCollection.findOneAndUpdate({ _id : new ObjectId (order_id) },{ $set:{orderStatus:status} }) 
                 const updateStatus  = await orderCollection.findOneAndUpdate(
       { _id: new ObjectId(order_id) },
@@ -135,7 +134,6 @@ const singleOrderdetails = async (req,res) =>{
     try
     {
         const productData = await orderCollection.findOne({ _id : order_id})
-        console.log(productData)
         res.render('./admin/singleOrderDetails',{ productData})
     }
     catch(error)

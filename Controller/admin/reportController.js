@@ -119,7 +119,6 @@ const getOrderDetails = async (req, res) => {
             ])
         }
         
-        console.log(orderDetails);
         res.json(orderDetails);
     } catch (err) {
         console.log(err);
@@ -153,7 +152,6 @@ const downloadPDF = async (req, res) => {
         ]);
 
         if (orderDetails.length > 0) {
-            console.log(reportType,"reportType")
             if(reportType === 'PDF')
             await generatePdf(orderDetails, res);
             else if(reportType === 'EXCEL')
@@ -171,7 +169,6 @@ const downloadPDF = async (req, res) => {
 }
 
 const generateExcel = async (orders, res) => {
-    console.log("inside this one")
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet 1');
 

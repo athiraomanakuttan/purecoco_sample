@@ -794,7 +794,6 @@ const repaymentSuccess = async (req,res)=>{
 
         const updateOrder = await orderCollection.findOneAndUpdate({_id: new ObjectId(orderId), customer_id:new ObjectId(userId) },{$set:{orderStatus: 'Pending'}});
 
-        console.log(updateOrder);
 
         return res.status(200).json({message : 'success'})
 

@@ -78,7 +78,6 @@ const showWishlist = async (req, res) => {
                 }
             }));
 
-            console.log(wishlistData[0].product_data);
         }
 
         res.render('./user/wishlist', { wishlistData });

@@ -110,20 +110,38 @@ const addCategory = async (req, res) => {
 
 const removeCategory = async (req, res) => {
   const id = req.params.id;
+  
   try {
-    const updateCategory = await categoryCollection.findByIdAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: { category_status: -1 } }
-    );
-    globalNotification["status"] = "success";
-    globalNotification["message"] = "category deleted successfuly";
+    const result = await categoryCollection.findByIdAndDelete(id);
+    
+    if (result !== null) {
+      req.flash('status', 'success');
+      req.flash('message', 'Category deleted successfully');
+      
+      // Return JSON for fetch requests
+      return res.json({ 
+        success: true, 
+        message: 'Category deleted successfully' 
+      });
+    } else {
+      req.flash('status', 'error');
+      req.flash('message', 'Category not found');
+      
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Category not found' 
+      });
+    }
   } catch (err) {
-    globalNotification["status"] = "error";
-    globalNotification["message"] = "Something went wrong";
-    console.log("unable to delete the category" + err);
+    console.error('Error deleting category:', err);
+    req.flash('status', 'error');
+    req.flash('message', 'Failed to delete category');
+    
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Failed to delete category' 
+    });
   }
-
-  res.redirect(`/admin/category`);
 };
 
 // --------------------------- Edit category -------------------------

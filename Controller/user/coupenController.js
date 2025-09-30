@@ -43,7 +43,6 @@ const getCoupen = async (req, res) => {
         }
     ])
 
-      console.log("coupenData",coupenData)
       res.json(coupenData);
     } catch(err) {
       console.log(err);

@@ -45,7 +45,6 @@ try
         { $sort: { totalQuantitySold: -1 } }, // Sort by total quantity sold in descending order
         { $limit: 10 } // Limit to top 10 categories
     ]);
-    console.log(categoryData)
     res.json(categoryData)
 }catch(err){
     res.status(500).json({error : err.message})

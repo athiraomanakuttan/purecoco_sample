@@ -167,7 +167,6 @@
 function changeInputValue(button, action, productId,stock) {
  
     const inputElement = button.parentNode.querySelector(`input[data-product-id='${productId}']`);
-    console.log("inputElement.value",inputElement.value, action)
     if((inputElement.value == stock)  && action =='increase'){
       
      notificationMessage("Stock available is "+ stock,"error")
@@ -193,7 +192,6 @@ function changeInputValue(button, action, productId,stock) {
 
 // Function to update the product quantity in the database
 function updateProductQuantity(productId, quantity) {
-  console.log(quantity)
     fetch(`/update-cart-item/${productId}`, {
         method: 'POST',
         headers: {

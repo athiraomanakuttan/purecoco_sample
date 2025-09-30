@@ -81,8 +81,7 @@ const getOffer = async (req, res) => {
 
 const getColumnData = async (req, res) => {
     const offer_type = req.body.offer_type || "";
-    console.log("offer_type");
-    console.log(offer_type);
+    
     if (offer_type) {
         let data;
         try {

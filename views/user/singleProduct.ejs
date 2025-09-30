@@ -205,7 +205,6 @@
     const button = document.getElementById('fav-icon');
     if (button) {
         button.addEventListener('click', function (event) {
-            console.log("Button clicked");
             event.preventDefault(); // Prevent the default anchor behavior
 
             const productId = button.getAttribute('data-id');
@@ -235,7 +234,6 @@
                 return response.json(); // Parse the response as JSON
             })
             .then(data => {
-                console.log("data", data);
                 if (!data.success) {
                     if (data.redirect) {
                         window.location.href = data.redirect;

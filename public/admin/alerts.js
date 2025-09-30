@@ -1,6 +1,5 @@
 function validationError(message)
 {
-    console.log("hey")
     Swal.fire({
         icon: "error",
         text: message

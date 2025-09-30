@@ -32,7 +32,6 @@ async function paynow(orderId)
         },
         body:JSON.stringify({orderId})
     }).then((res)=>{
-        console.log("responce",res)
 
         if(res.redirected)
             window.location.href= res.url;

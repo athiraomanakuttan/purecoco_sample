@@ -55,7 +55,6 @@
 <script>
     function searchProduct() {
         const searchInput = document.getElementById('search-input').value;
-        console.log(searchInput);
         if (searchInput && searchInput !== '') {
             window.location.href = `/shop?search=${searchInput}`;
         }
@@ -76,7 +75,6 @@
             return response.json(); // This will throw if the response is not JSON
         })
         .then((data) => {
-            console.log(data);
             if (data > 0) {
                 const lblCartCount = document.getElementById('lblCartCount');
                 lblCartCount.innerHTML = data;

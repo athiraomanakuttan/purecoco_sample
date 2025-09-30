@@ -1,5 +1,4 @@
 const adminSessionCheck = (req,res,next)=>{
-    console.log("admin session active");
     if(req.session.adminEmail)
         {
            
