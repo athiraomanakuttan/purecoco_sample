@@ -36,7 +36,14 @@ app.use(flash())
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
+  // For your product notifications (matching your EJS template)
+  res.locals.notification = {
+    status: req.flash('status')[0] || '',
+    message: req.flash('message')[0] || ''
+  };
+  
   res.locals.messages = req.flash();
+  
   next();
 });
 

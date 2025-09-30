@@ -1,14 +1,6 @@
 <%- include('./header') %> <%- include('./navbar') %>
     <script src="../../public/admin/alerts.js"></script>
-          <% if(notification.status=='error' ){ %>
-  <script>
-    validationError("<%= notification.message %>");
-  </script>
-<% } else if(notification.status=='success' ) {%>
-  <script>
-    successNotification("<%= notification.message %>");
-  </script>
-<% } %>
+          
 
           <!-- Cards -->
           <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4  my-6">
@@ -131,26 +123,37 @@
                               <%} %>
                         </td>
                         <td class="px-4 py-3 text-sm">
-                          <div class="relative">
-                            <a href="#" onclick="toggleDropdown(event, this)"><i
-                                class="bx bx-dots-vertical-rounded"></i></a>
-                            <div id="dropdownMenu"
-                              class="hidden absolute z-10 w-48 py-2 mt-2 origin-top-right bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700">
-                              <% if(data.product_status===1){ %>
-                                <a href="/admin/updateProductStatus/<%= data._id %>/0"
-                                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Disable</a>
-                                <% } else {%>
-                                  <a href="/admin/updateProductStatus/<%= data._id %>/1"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Enable</a>
-                                  <% } %>
+  <div class="relative">
+    <a href="#" onclick="toggleDropdown(event, this)"><i class="bx bx-dots-vertical-rounded"></i></a>
+    <div id="dropdownMenu" class="hidden absolute z-10 w-48 py-2 mt-2 origin-top-right bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700">
+      
+      <% if(data.product_status===1){ %>
+        <a href="#" 
+           onclick="toggleProductStatus('<%= data._id %>', 0, '<%= data.product_name %>', event)"
+           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">
+          Disable
+        </a>
+      <% } else {%>
+        <a href="#" 
+           onclick="toggleProductStatus('<%= data._id %>', 1, '<%= data.product_name %>', event)"
+           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">
+          Enable
+        </a>
+      <% } %>
 
-                                    <a href="/admin/updateProductStatus/<%= data._id %>/-1"
-                                      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Delete</a>
-                                    <a href="/admin/editproduct/<%= data._id %>"
-                                      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">Edit</a>
-                            </div>
-                          </div>
-                        </td>
+      <a href="#" 
+         onclick="deleteProduct('<%= data._id %>', '<%= data.product_name %>', event)"
+         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">
+        Delete
+      </a>
+      
+      <a href="/admin/editproduct/<%= data._id %>"
+         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900">
+        Edit
+      </a>
+    </div>
+  </div>
+</td>
                       </tr>
 
                       <% }) } %>
@@ -353,6 +356,131 @@
       }
     });
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Check if there's a notification message
+    const hasNotification = '<%= notification.status %>' !== '';
+    
+    if (hasNotification) {
+      // Close the modal using Bootstrap's API
+      const modal = document.getElementById('exampleModal');
+      if (modal) {
+        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+        if (bootstrapModal) {
+          bootstrapModal.hide();
+        }
+      }
+      
+      // Remove modal backdrop if it exists
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.remove();
+      }
+      
+      // Remove modal-open class from body
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  });
+
+  async function deleteProduct(productId, productName, event) {
+  event.preventDefault();
+  
+  // Show confirmation dialog with product name
+  if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/admin/updateProductStatus/${productId}/-1`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      
+      // Remove the table row with fade effect
+      const row = event.target.closest('tr');
+      row.style.opacity = '0';
+      row.style.transition = 'opacity 0.3s';
+      
+      setTimeout(() => {
+        row.remove();
+        
+        // Show success message
+        if (typeof successNotification === 'function') {
+          successNotification(result.message || 'Product deleted successfully');
+        }
+        
+        // Reload page after a short delay to update counts
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }, 300);
+      
+    } else {
+      const error = await response.json();
+      if (typeof validationError === 'function') {
+        validationError(error.message || 'Failed to delete product');
+      }
+    }
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    if (typeof validationError === 'function') {
+      validationError('An error occurred while deleting the product');
+    }
+  }
+}
+
+// Similarly for Enable/Disable actions
+async function toggleProductStatus(productId, newStatus, productName, event) {
+  event.preventDefault();
+  
+  const action = newStatus === 1 ? 'enable' : 'disable';
+  if (!confirm(`Are you sure you want to ${action} "${productName}"?`)) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/admin/updateProductStatus/${productId}/${newStatus}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      
+      // Show success message
+      if (typeof successNotification === 'function') {
+        successNotification(result.message || `Product ${action}d successfully`);
+      }
+      
+      // Reload to update the UI
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+      
+    } else {
+      const error = await response.json();
+      if (typeof validationError === 'function') {
+        validationError(error.message || `Failed to ${action} product`);
+      }
+    }
+  } catch (error) {
+    console.error(`Error ${action}ing product:`, error);
+    if (typeof validationError === 'function') {
+      validationError(`An error occurred while ${action}ing the product`);
+    }
+  }
+}
+
+
 </script>
 
           <script src="../../admin/productScript.js"></script>

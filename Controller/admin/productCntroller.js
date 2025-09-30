@@ -12,7 +12,10 @@ let globalNotification={}
 // ---------------------- List all products -------------------------------- 
 
 const listProducts = async (req, res) => {
-  let notification = {};
+  console.log('📩 Flash status:', req.flash('status'));
+  console.log('📩 Flash message:', req.flash('message'));
+  console.log('📩 res.locals.notification:', res.locals.notification);
+
   const search = req.query.search || "";
   const category = req.query.category || "";
   const order = req.query.order || "";
@@ -20,11 +23,6 @@ const listProducts = async (req, res) => {
   const limit = 8;
   const skip = (page - 1) * limit;
   let sortQuery = {};
-
-  if (globalNotification.status) {
-    notification = globalNotification;
-    globalNotification = {};
-  }
 
   if (category && order) {
     sortQuery[category] = order === "asc" ? 1 : -1;
@@ -61,10 +59,11 @@ const listProducts = async (req, res) => {
     const categoryData = await getCategory();
     const productCount = await getProductCount();
 
+    // DON'T pass notification - it's already in res.locals from middleware
     res.render('./admin/productList', {
       productData,
       categoryData,
-      notification,
+      // notification,  ← REMOVE THIS LINE
       dateFormat,
       productCount,
       page,
@@ -84,103 +83,125 @@ const listProducts = async (req, res) => {
 // ----------------------------------- Add a new product -------------------- 
 
 const addProduct = async (req, res) => {
-    const data = {
-      product_name: req.body.product_name,
-      product_description: req.body.product_description,
-      product_price: req.body.product_price,
-      product_quantity: req.body.product_quantity,
-      product_stock: req.body.product_stock,
-      category_id: req.body.product_category,
-      product_status: 1,
-      timestamp: Date.now()
-    }
-    let notification={}
-    const validation = productValidation(data)
-    if(!validation.error){
-    const exist = await productCollection.findOne({ product_name: data.product_name, product_status:{$ne:-1}});
+  const data = {
+    product_name: req.body.product_name,
+    product_description: req.body.product_description,
+    product_price: req.body.product_price,
+    product_quantity: req.body.product_quantity,
+    product_stock: req.body.product_stock,
+    category_id: req.body.product_category,
+    product_status: 1,
+    timestamp: Date.now()
+  };
+
+  const validation = productValidation(data);
+  
+  if (!validation.error) {
+    const exist = await productCollection.findOne({ 
+      product_name: data.product_name, 
+      product_status: { $ne: -1 } 
+    });
+
     if (exist === null) {
-      const category = await categoryCollection.findOne({ _id: data.category_id }, { category_name: 1 });
+      const category = await categoryCollection.findOne(
+        { _id: data.category_id }, 
+        { category_name: 1 }
+      );
       data['category_name'] = category.category_name;
+      
       const images = req.files;
       if (!images || images.length === 0) {
-        globalNotification['status'] = 'error';
-        globalNotification['message'] = 'No files were uploaded.';
-        return res.redirect('/admin/products'); // Adjust as needed
+        console.log('❌ Setting flash: No files uploaded'); // DEBUG
+        req.flash('status', 'error');
+        req.flash('message', 'No files were uploaded.');
+        return res.redirect('/admin/products');
       }
+
       let imageUrls = [];
-      images.map(file => imageUrls.push(path.basename(file.path)));
+      images.forEach(file => imageUrls.push(path.basename(file.path)));
       data['product_image'] = imageUrls;
-  
+
       try {
         const insertProduct = await productCollection.insertMany(data);
         if (insertProduct !== null) {
-          notification['status'] = 'success';
-          notification['message'] = 'Product added successfully';
+          console.log('✅ Setting flash: Product added successfully'); // DEBUG
+          req.flash('status', 'success');
+          req.flash('message', 'Product added successfully');
         }
-        const productData = await productCollection.find({ product_status: { $ne: -1 } }).sort({ timestamp: -1 });
-        const categoryData = await getCategory();
-        const productCount= await getProductCount()
         return res.redirect('/admin/products');
-        // res.render('./admin/productList', { productData, categoryData, notification, dateFormat , productCount, page:1 });
       } catch (err) {
-        console.log(err);
+        console.error('Error inserting product:', err);
+        req.flash('status', 'error');
+        req.flash('message', 'Error adding product');
+        return res.redirect('/admin/products');
       }
     } else {
-      notification['status'] = 'error';
-      notification['message'] = 'Product Name already exist';
-      const productData = await productCollection.find({ product_status: { $ne: -1 } }).sort({ timestamp: -1 });
-      const categoryData = await getCategory();
-      const productCount= await getProductCount()
+      console.log('❌ Setting flash: Product already exists'); // DEBUG
+      req.flash('status', 'error');
+      req.flash('message', 'Product Name already exists');
       return res.redirect('/admin/products');
-      // res.render('./admin/productList', { productData, categoryData, notification, dateFormat ,productCount, page:1});
-    }}
-    else{
-        notification['status'] = 'error';
-        notification['message'] = validation.message;
-        const productData = await productCollection.find({ product_status: { $ne: -1 } }).sort({ timestamp: -1 });
-        const categoryData = await getCategory();
-        const productCount= await getProductCount()
-        return res.redirect('/admin/products');
-        // res.render('./admin/productList', { productData, categoryData, notification, dateFormat,productCount, page:1 });
     }
-  };
+  } else {
+    console.log('❌ Setting flash: Validation error -', validation.message); // DEBUG
+    req.flash('status', 'error');
+    req.flash('message', validation.message);
+    return res.redirect('/admin/products');
+  }
+};
   
 
 //   ------------------------- Product disable, ebable , delete ------------------------ 
 
 const updateStatus = async (req, res) => {
-    const id = req.params.id
-    const status = req.params.status
+    const id = req.params.id;
+    const status = parseInt(req.params.status);
+    
     if (status >= -1 && status <= 1) {
         try {
-            const changeStatus = await productCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: { product_status: status } })
+            const changeStatus = await productCollection.findOneAndUpdate(
+                { _id: new ObjectId(id) }, 
+                { $set: { product_status: status } }
+            );
+            
             if (changeStatus !== null) {
-                globalNotification['status'] = 'success'
-                if (status == 0)
-                    globalNotification['message'] = "Product Disabled successfully"
-                else if (status == 1)
-                    globalNotification['message'] = "Product Enabled successfully"
-                else if (status == -1)
-                    globalNotification['message'] = "Product Deleted successfully"
+                let message = '';
+                if (status == 0) {
+                    message = "Product Disabled successfully";
+                } else if (status == 1) {
+                    message = "Product Enabled successfully";
+                } else if (status == -1) {
+                    message = "Product Deleted successfully";
+                }
+                
+                req.flash('status', 'success');
+                req.flash('message', message);
+                
+                // Return JSON for fetch requests
+                return res.json({ 
+                    success: true, 
+                    message: message 
+                });
             }
+        } catch (err) {
+            console.error(err);
+            req.flash('status', 'error');
+            req.flash('message', "Update failed");
+            
+            return res.status(500).json({ 
+                success: false, 
+                message: "Update failed" 
+            });
         }
-        catch (err) {
-            globalNotification['status'] = 'error'
-            globalNotification['message'] = "Updation failed"
-            console.log(err)
-        }
+    } else {
+        req.flash('status', 'error');
+        req.flash('message', 'Invalid operation');
+        
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Invalid operation' 
+        });
     }
-    else {
-        globalNotification['status'] = 'error'
-        globalNotification['message'] = 'Invalid operation'
-    }
-
-    const productData = await productCollection.find({ product_status: { $ne: -1 } }).sort({ timestamp: -1 });;
-    const categoryData = await getCategory();
-
-    res.redirect(`/admin/products`)
-}
-
+};
 // -------------------------------- Product Editing ----------- 
 
 const editProduct = async (req, res) => {
