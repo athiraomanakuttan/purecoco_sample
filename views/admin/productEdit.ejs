@@ -9,7 +9,6 @@
 </script>
 <%}%>
     
-    
     <div class="container">
         <div class="col-8 offset-2">
             <form action="/admin/update-product/<%= productData._id%>" method="post" enctype="multipart/form-data">
@@ -55,16 +54,19 @@
             <div id="imageContainer" class="img-flex-div"></div>
             <div class="image-gallery" id="">
     <% productData.product_image.forEach((val, index) => { %>
-        <div class="image-container">
+        <div class="image-container" style="transition: opacity 0.3s;">
             <img src="../../<%= val %>" alt="Product image">
             <div class="hover-text">
-                <a href="/admin/product-image-delete/<%= productData._id %>/<%= index %>">
+                <button type="button" 
+                        onclick="deleteProductImage('<%= productData._id %>', '<%= index %>', this)"
+                        style="background: none; border: none; cursor: pointer; color: inherit;">
                     <i class='bx bxs-trash-alt'></i>
-                </a>
+                </button>
             </div>
         </div>
     <% }) %>
 </div>
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -114,4 +116,41 @@ function setImage(imageUrl, container) {
     imgElement.style.maxWidth = "200px"; // Limit the size of the displayed images
     container.appendChild(imgElement);
 }
+async function deleteProductImage(productId, imageIndex, element) {
+    // Show confirmation dialog
+    if (!confirm('Are you sure you want to delete this image?')) {
+        return;
+    }
+
+    try {
+        // Send delete request
+        const response = await fetch(`/admin/product-image-delete/${productId}/${imageIndex}`, {
+            method: 'GET', // Change to 'DELETE' if you modify your backend route
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            
+            // Remove the image container from DOM
+            const imageContainer = element.closest('.image-container');
+            imageContainer.style.opacity = '0';
+            setTimeout(() => {
+                imageContainer.remove();
+            }, 300);
+
+            // Show success message
+            successNotification(result.message || 'Image deleted successfully');
+        } else {
+            const error = await response.json();
+            validationError(error.message || 'Failed to delete image');
+        }
+    } catch (error) {
+        console.error('Error deleting image:', error);
+        validationError('An error occurred while deleting the image');
+    }
+}
+
 </script>

@@ -229,7 +229,10 @@ const deleteProductImage = async (req, res) => {
     } catch (err) {
         console.log(err);
     }
-    res.redirect(`/admin/editproduct/${id}`);
+    res.json({ 
+            success: true, 
+            message: 'Image deleted successfully' 
+  });
 };
 
 
