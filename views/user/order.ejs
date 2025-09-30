@@ -27,9 +27,9 @@
         <button class="btn" onclick="getOrderByCategory('all')">Orders</button>
         <button class="btn view-button" onclick="getOrderByCategory('Delivered')">Delivered</button>
         <button class="btn view-button" onclick="getOrderByCategory('Cancelled')">Cancelled</button>
+        <button class="btn view-button" onclick="getOrderByCategory('Returned')">Returned </button>
         <button class="btn view-button" onclick="getOrderByCategory('Partially Cancelled')">Partially Cancelled</button>
         <button class="btn view-button" onclick="showCancelledProducts()">Cancelled Products</button>
-        <button class="btn view-button" onclick="getOrderByCategory('Returned')">Returned </button>
       </div>
     <div id="orderContent">
       <% if(orderData.length===0){

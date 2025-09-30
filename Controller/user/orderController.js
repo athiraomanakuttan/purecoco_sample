@@ -38,8 +38,6 @@ const viewOrders= async (req,res)=>{
 
         // const updateOrder = await updateOrderStatus(user_id)
 
-        
-
         const totalOrder = await orderCollection.find({customer_id:user_id,orderStatus:{$in:['Confirmed', 'Pending', 'Delivered', 'Returned', 'Cancelled','Shipped','Payment Pending']}}).sort({createdAt:-1})
 
         // Get active orders (excluding cancelled and partially cancelled orders)
@@ -203,7 +201,8 @@ const viewOrderDetails = async (req,res)=>{
             totalPrice: calculatedTotalPrice,
             totalQuantity: calculatedTotalQuantity,
             activeProducts,
-            cancelledProducts
+            cancelledProducts,
+            orderId: order_id
         }
         
         

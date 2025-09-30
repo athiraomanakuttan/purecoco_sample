@@ -68,7 +68,21 @@ const updateOrderStatus= async (req,res)=>{
         {
             try
             {
-                const updateStatus = await orderCollection.findOneAndUpdate({ _id : new ObjectId (order_id) },{ $set:{orderStatus:status} }) 
+              console.log("orderId", order_id, "status",status,)
+                // const updateStatus = await orderCollection.findOneAndUpdate({ _id : new ObjectId (order_id) },{ $set:{orderStatus:status} }) 
+                const updateStatus  = await orderCollection.findOneAndUpdate(
+      { _id: new ObjectId(order_id) },
+      {
+        $set: {
+          orderStatus: status,
+          "products.$[p].product_status": status // update only matching array items
+        }
+      },
+      {
+        arrayFilters: [ { "p.product_status":{$in:["Confirmed", "Pending"] } } ], // only Pending products
+        returnDocument: "after" // return the updated document if you need it
+      }
+    );
                 if (['razorpay', 'Wallet'].includes(updateStatus.paymentMethod) && status =='Cancelled') {
                     const wallet_balance = updateStatus.totalPrice;
                     const transaction_details = {
