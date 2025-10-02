@@ -56,84 +56,94 @@ const reportPage =async (req,res)=>{
 }
 
 const getOrderDetails = async (req, res) => {
-    let { startDate, endDate, salesreportType } = req.body;
+    let { startDate, endDate, salesreportType, page = 1, limit = 10 } = req.body;
     let orderDetails;
-    let match = {};
+    let match = {
+        orderStatus: { $nin: ['Cancelled','Returned'] }, // Exclude cancelled orders
+        totalQuantity: { $gt: 0 } // Exclude orders with 0 quantity
+    };
+    
+    const skip = (parseInt(page) - 1) * parseInt(limit);
     
     try {
-        if (!salesreportType) {
-            orderDetails = await orderCollection.aggregate([
-                {
-                    $lookup: {
-                        from: 'coupons',
-                        localField: 'coupen_id',
-                        foreignField: '_id',
-                        as: 'coupen_data'
-                    }
-                },
-                {
-                    $sort: { createdAt: -1 }
-                }
-            ])
-        } else {
+        // Add date filter based on report type
+        if (salesreportType) {
             const now = new Date();
             if (salesreportType === 'custom') {
                 const start = new Date(startDate);
-                start.setHours(0, 0, 0, 0); // Set start time to 00:00:00.000
+                start.setHours(0, 0, 0, 0);
             
                 const end = new Date(endDate);
-                end.setHours(23, 59, 59, 999); // Set end time to 23:59:59.999
+                end.setHours(23, 59, 59, 999);
             
-                match = {
-                    createdAt: { $gte: start, $lte: end }
-                };
+                match.createdAt = { $gte: start, $lte: end };
             } else if (salesreportType === 'monthly') {
                 endDate = new Date();
                 startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                match = { createdAt: { $gte: startDate, $lte: endDate} };
+                match.createdAt = { $gte: startDate, $lte: endDate };
             } else if (salesreportType === 'yearly') {
                 endDate = new Date();
                 startDate = new Date(now.getFullYear(), 0, 1);
-                match = { createdAt: { $gte: startDate, $lte: endDate } };
+                match.createdAt = { $gte: startDate, $lte: endDate };
             } else if (salesreportType === 'weekly') {
                 endDate = new Date();
                 const currentDate = new Date();
                 const diff = currentDate.getDate() - currentDate.getDay();
                 startDate = new Date(currentDate.setDate(diff));
-                match = { createdAt: { $gte: startDate, $lte: endDate } };
+                match.createdAt = { $gte: startDate, $lte: endDate };
             }
-
-            orderDetails = await orderCollection.aggregate([
-                { $match: match },
-                {
-                    $lookup: {
-                        from: 'coupons',
-                        localField: 'coupen_id',
-                        foreignField: '_id',
-                        as: 'coupen_data'
-                    }
-                },
-                {
-                    $sort: { createdAt: -1 }
-                }
-            ])
         }
+
+        // Get total count for pagination
+        const totalOrders = await orderCollection.countDocuments(match);
+        const totalPages = Math.ceil(totalOrders / parseInt(limit));
+
+        // Get paginated data
+        orderDetails = await orderCollection.aggregate([
+            { $match: match },
+            {
+                $lookup: {
+                    from: 'coupons',
+                    localField: 'coupen_id',
+                    foreignField: '_id',
+                    as: 'coupen_data'
+                }
+            },
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: parseInt(limit) }
+        ]);
         
-        res.json(orderDetails);
+        res.json({
+            orders: orderDetails,
+            currentPage: parseInt(page),
+            totalPages: totalPages,
+            totalOrders: totalOrders,
+            hasNextPage: parseInt(page) < totalPages,
+            hasPrevPage: parseInt(page) > 1
+        });
     } catch (err) {
         console.log(err);
-        res.status(400).json(err);
+        res.status(400).json({ error: err.message });
     }
 };
 
 // ----------------------------- downloading report --------------------------- 
 
 const downloadPDF = async (req, res) => {
-    const { salesreportType, startDate, endDate ,reportType } = req.body;
-    let match = {};
-    if (salesreportType !== "") {
-        match = {
-            createdAt: { $lte: new Date(endDate), $gte: new Date(startDate) },
+    const { salesreportType, startDate, endDate, reportType } = req.body;
+    
+    // Base match to exclude cancelled orders and zero quantity
+    let match = {
+        orderStatus: { $nin: ['Cancelled','Returned'] },
+        totalQuantity: { $gt: 0 }
+    };
+    
+    // Add date filtering if report type is specified
+    if (salesreportType !== "" && salesreportType) {
+        match.createdAt = { 
+            $gte: new Date(startDate), 
+            $lte: new Date(endDate) 
         };
     }
 
@@ -152,13 +162,11 @@ const downloadPDF = async (req, res) => {
         ]);
 
         if (orderDetails.length > 0) {
-            if(reportType === 'PDF')
-            await generatePdf(orderDetails, res);
-            else if(reportType === 'EXCEL')
-            {
+            if (reportType === 'PDF') {
+                await generatePdf(orderDetails, res);
+            } else if (reportType === 'EXCEL') {
                 await generateExcel(orderDetails, res);
             }
-
         } else {
             res.status(404).json({ message: "No orders found for the specified period." });
         }
@@ -166,7 +174,7 @@ const downloadPDF = async (req, res) => {
         console.log(err);
         res.status(500).json({ message: err.message });
     }
-}
+};
 
 const generateExcel = async (orders, res) => {
     const workbook = new ExcelJS.Workbook();
