@@ -24,6 +24,9 @@ const listProducts = async (req, res) => {
   const skip = (page - 1) * limit;
   let sortQuery = {};
 
+  console.log("search ===========>>>>>>",search)
+
+
   if (category && order) {
     sortQuery[category] = order === "asc" ? 1 : -1;
   } else {
@@ -40,7 +43,8 @@ const listProducts = async (req, res) => {
           {
             $or: [
               { product_name: { $regex: search, $options: 'i' } },
-              { category_name: { $regex: search, $options: 'i' } }
+              { product_description: { $regex: search, $options: 'i' } }
+              // Removed category_name search from here
             ]
           }
         ]
@@ -50,20 +54,28 @@ const listProducts = async (req, res) => {
     const totalProducts = await productCollection.countDocuments(productQuery);
     const totalPages = Math.ceil(totalProducts / limit);
 
-    const productData = await productCollection
+    let productData = await productCollection
       .find(productQuery)
       .sort(sortQuery)
       .skip(skip)
       .limit(limit);
 
+    // If searching by category name, filter results after fetching
+    if (search !== '') {
+      productData = productData.filter(product => {
+        const matchesName = product.product_name?.toLowerCase().includes(search.toLowerCase());
+        const matchesDescription = product.product_description?.toLowerCase().includes(search.toLowerCase());
+        const matchesCategory = product.category_name?.toLowerCase().includes(search.toLowerCase());
+        return matchesName || matchesDescription || matchesCategory;
+      });
+    }
+
     const categoryData = await getCategory();
     const productCount = await getProductCount();
 
-    // DON'T pass notification - it's already in res.locals from middleware
     res.render('./admin/productList', {
       productData,
       categoryData,
-      // notification,  ← REMOVE THIS LINE
       dateFormat,
       productCount,
       page,

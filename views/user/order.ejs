@@ -86,7 +86,7 @@
               <div class="col-md-6">
                 <div class="mt-3">
                   <h6 class="mb-0 mt-1">Total Amount : <span class="fw-medium color"> ₹
-                      <%=order.totalPrice %></span></h6>
+                      <%=(order.totalPrice).toFixed(2) %></span></h6>
                   <p class="mb-0 mt-1 color">Payment : <span class="fw-medium">
                     <%=order.paymentMethod %></span></p>
                 </div>
@@ -149,7 +149,7 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mt-3">
-                    <h6 class="mb-0 mt-1">Total Amount : <span class="fw-medium color">₹<%= order.totalPrice%></span></h6>
+                    <h6 class="mb-0 mt-1">Total Amount : <span class="fw-medium color">₹<%= (order.totalPrice).toFixed(2) %></span></h6>
                     <p class="mb-0 mt-1 color">Payment : <span class="fw-medium"><%= order.paymentMethod%></span></p>
                   </div>
                 </div>
@@ -415,7 +415,7 @@ async function getOrderByCategory(orderStatus) {
               <div class="row">
                 <div class="col-md-6">
                   <div class="mt-3">
-                    <h6 class="mb-0 mt-1">Total Amount : <span class="fw-medium color">₹${order.totalPrice}</span></h6>
+                    <h6 class="mb-0 mt-1">Total Amount : <span class="fw-medium color">₹${(order.totalPrice).toFixed(2)}</span></h6>
                     <p class="mb-0 mt-1 color">Payment : <span class="fw-medium">${order.paymentMethod}</span></p>
                   </div>
                 </div>

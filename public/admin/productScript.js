@@ -78,6 +78,24 @@ document.getElementById("crop-button").addEventListener("click", function () {
   });
 });
 
+document.getElementById('searchForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const searchValue = document.getElementById('searchInput').value;
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  // Build the query string
+  const params = new URLSearchParams({
+    search: searchValue,
+    page: urlParams.get('page') || '1',
+    order: urlParams.get('order') || '',
+    category: urlParams.get('category') || ''
+  });
+  
+  // Use window.location instead of fetch for navigation
+  window.location.href = `/admin/products?${params.toString()}`;
+});
+
 
 // Submit form with cropped images
 document.querySelector("form").addEventListener("submit", function (event) {
@@ -85,7 +103,7 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
   // Submit the form with FormData object including cropped images
   fetch(this.action, {
-    method: this.method,
+    method: this.method || "POST",
     body: formData,
   })
     .then((response) => {
