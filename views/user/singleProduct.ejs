@@ -88,7 +88,7 @@
                 <label class="mb-2 d-block">Quantity</label>
                 <div class="input-group mb-3" style="width: 170px;">
 
-                  <input type="number" name="quantity" class="form-control text-center border border-secondary number-input" value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" min="0" max="<%= productData.product_stock%>" />
+                  <input type="number" name="quantity" class="form-control text-center border border-secondary number-input" value="1" aria-label="Example text with button addon" aria-describedby="button-addon1" min="0" max="<%= productData.product_stock < 5 ? productData.product_stock : 5 %>" />
 
                 </div>
               </div>
